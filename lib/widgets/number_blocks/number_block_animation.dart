@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import '../../configs/config.dart';
 
 abstract class NumberBlockAnimation extends StatefulWidget {
   final Widget child;
+  final VoidCallback? onAnimationTriggered;
 
   const NumberBlockAnimation({
     super.key,
     required this.child,
+    this.onAnimationTriggered,
   });
 }
 
@@ -18,7 +21,7 @@ abstract class NumberBlockAnimationState<T extends NumberBlockAnimation> extends
   void initState() {
     super.initState();
     _controller = AnimationController(
-      duration: const Duration(milliseconds: 400),
+      duration: Duration(milliseconds: Config.numberBlockAnimationDurationMs),
       vsync: this,
     );
     
@@ -41,6 +44,7 @@ abstract class NumberBlockAnimationState<T extends NumberBlockAnimation> extends
     if (!_hasAnimated) {
       _hasAnimated = true;
       _controller.forward();
+      widget.onAnimationTriggered?.call();
     }
   }
 
@@ -49,6 +53,7 @@ abstract class NumberBlockAnimationState<T extends NumberBlockAnimation> extends
   @override
   Widget build(BuildContext context) {
     return MouseRegion(
+      cursor: SystemMouseCursors.click,
       onEnter: (_) => _triggerAnimation(),
       child: AnimatedBuilder(
         animation: _controller,

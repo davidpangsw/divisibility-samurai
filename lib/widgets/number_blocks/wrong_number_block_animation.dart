@@ -10,6 +10,7 @@ class WrongNumberBlockAnimation extends NumberBlockAnimation {
     required super.child,
     required this.startColor,
     required this.endColor,
+    super.onAnimationTriggered,
   });
 
   @override

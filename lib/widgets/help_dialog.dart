@@ -24,10 +24,10 @@ class HelpDialog extends StatelessWidget {
             const SizedBox(height: 10),
             Text(
               'Identify numbers divisible by the given divisor. Numbers appear as blocks with physics-based movement. Slash correct numbers to score points.\n\n'
-              '• ${Config.totalLevels} levels with divisors ${Config.minDivisor}-${Config.maxDivisor}\n'
+              '• ${Config.totalLevels} levels with divisors ${Config.divisors.join(', ')}\n'
               '• ${Config.totalLives} lives total\n'
               '• ${Config.blocksNeededPerLevel} correct blocks needed per level\n'
-              '• Max ${Config.maxNumberBlocks} blocks on screen',
+              '• Max ${Config.maxNumberBlocksInPlayArea} blocks on screen',
             ),
             const SizedBox(height: 20),
             const Text(

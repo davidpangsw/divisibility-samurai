@@ -1,26 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'dart:math';
 import '../../configs/config.dart';
+import '../../view_models/game_view_model.dart';
 import '../number_blocks/number_block.dart';
-
-class AnimatedNumberBlock {
-  final int number;
-  final bool isCorrect;
-  double x;
-  double y;
-  double velocityX;
-  double velocityY;
-  bool isAnimating = false;
-  
-  AnimatedNumberBlock({
-    required this.number,
-    required this.isCorrect,
-    required this.x,
-    required this.y,
-    required this.velocityX,
-    required this.velocityY,
-  });
-}
+import '../number_blocks/animated_number_block_model.dart';
+import 'physics_engine.dart';
+import 'block_factory.dart';
 
 class PlayArea extends StatefulWidget {
   const PlayArea({super.key});
@@ -32,10 +18,8 @@ class PlayArea extends StatefulWidget {
 class _PlayAreaState extends State<PlayArea> with TickerProviderStateMixin {
   late AnimationController _animationController;
   final List<AnimatedNumberBlock> _blocks = [];
-  final Random _random = Random();
-  
-  static const double gravity = 500.0; // pixels per second squared
-  static const double bounceDamping = 0.8;
+  int _frameCounter = 0;
+  static final int _blockGenerationInterval = (Config.blockGenerationIntervalMs / (1000 / 60)).round(); // Convert ms to frames at 60fps
 
   @override
   void initState() {
@@ -46,7 +30,8 @@ class _PlayAreaState extends State<PlayArea> with TickerProviderStateMixin {
     )..repeat();
     
     _animationController.addListener(_updatePhysics);
-    _generateNumberBlock();
+    // Start with one block
+    _tryGenerateBlock();
   }
 
   @override
@@ -55,58 +40,39 @@ class _PlayAreaState extends State<PlayArea> with TickerProviderStateMixin {
     super.dispose();
   }
 
-  void _generateNumberBlock() {
+  void _tryGenerateBlock() {
+    // Generate blocks up to max limit, with higher chance when fewer blocks exist
     if (_blocks.length < Config.maxNumberBlocksInPlayArea) {
-      final number = Config.minNumber + _random.nextInt(Config.maxNumber - Config.minNumber + 1);
-      final divisor = 3; // Using divisor 3 for now
-      final isCorrect = number % divisor == 0;
+      // Always generate if no blocks exist, otherwise use chance
+      bool shouldGenerate = _blocks.isEmpty || Random().nextDouble() < Config.blockGenerationChance;
       
-      final block = AnimatedNumberBlock(
-        number: number,
-        isCorrect: isCorrect,
-        x: _random.nextDouble() * (Config.playAreaWidth - Config.numberBlockWidth),
-        y: Config.playAreaHeight - Config.numberBlockHeight,
-        velocityX: (_random.nextDouble() - 0.5) * 200, // -100 to 100 pixels/second
-        velocityY: -450 - _random.nextDouble() * 180, // -450 to -630 pixels/second (upper half to top)
-      );
-      
-      setState(() {
-        _blocks.add(block);
-      });
+      if (shouldGenerate) {
+        final gameViewModel = Provider.of<GameViewModel>(context, listen: false);
+        final block = BlockFactory.createBlock(gameViewModel.gameState.divisor);
+        
+        setState(() {
+          _blocks.add(block);
+        });
+      }
     }
   }
 
   void _updatePhysics() {
-    const deltaTime = 1.0 / 60.0; // 60 FPS
-    
     setState(() {
+      PhysicsEngine.updatePhysics(_blocks);
+      
+      // Remove blocks that have fallen below the play area
       for (int i = _blocks.length - 1; i >= 0; i--) {
-        final block = _blocks[i];
-        
-        // Skip physics if block is animating
-        if (block.isAnimating) continue;
-        
-        // Apply gravity
-        block.velocityY += gravity * deltaTime;
-        
-        // Update position
-        block.x += block.velocityX * deltaTime;
-        block.y += block.velocityY * deltaTime;
-        
-        // Bounce off left/right edges
-        if (block.x <= 0) {
-          block.x = 0;
-          block.velocityX = -block.velocityX * bounceDamping;
-        } else if (block.x >= Config.playAreaWidth - Config.numberBlockWidth) {
-          block.x = Config.playAreaWidth - Config.numberBlockWidth;
-          block.velocityX = -block.velocityX * bounceDamping;
-        }
-        
-        // Remove block if it drops below bottom
-        if (block.y > Config.playAreaHeight) {
+        if (PhysicsEngine.shouldRemoveBlock(_blocks[i])) {
           _blocks.removeAt(i);
-          _generateNumberBlock();
         }
+      }
+      
+      // Increment frame counter and try to generate blocks periodically
+      _frameCounter++;
+      if (_frameCounter >= _blockGenerationInterval) {
+        _frameCounter = 0;
+        _tryGenerateBlock();
       }
     });
   }
@@ -114,7 +80,7 @@ class _PlayAreaState extends State<PlayArea> with TickerProviderStateMixin {
   void _removeBlock(AnimatedNumberBlock block) {
     setState(() {
       _blocks.remove(block);
-      _generateNumberBlock();
+      // Don't immediately generate a new block - let the timer handle it
     });
   }
 
@@ -132,22 +98,23 @@ class _PlayAreaState extends State<PlayArea> with TickerProviderStateMixin {
           return Positioned(
             left: block.x,
             top: block.y,
-            child: MouseRegion(
-              onEnter: (_) {
+            child: NumberBlock(
+              number: block.number,
+              isCorrect: block.isCorrect,
+              onSlashed: () {
                 if (!block.isAnimating) {
                   block.isAnimating = true;
+                  // Notify game view model about the slash
+                  final gameViewModel = Provider.of<GameViewModel>(context, listen: false);
+                  gameViewModel.onBlockSlashed(block.isCorrect);
                   // Remove block after animation duration
-                  Future.delayed(const Duration(milliseconds: 400), () {
+                  Future.delayed(Duration(milliseconds: Config.numberBlockAnimationDurationMs), () {
                     if (mounted) {
                       _removeBlock(block);
                     }
                   });
                 }
               },
-              child: NumberBlock(
-                number: block.number,
-                isCorrect: block.isCorrect,
-              ),
             ),
           );
         }).toList(),

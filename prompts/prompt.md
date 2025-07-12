@@ -2,24 +2,6 @@
 
 
 
-
-## Phase 2 Implementation (GameViewModel)
-3. Create a GameViewModel under the folder "lib/view_models". It is the only class in our app to extend ChangeNotifier. Do not implement anything yet.
-1. Implement the necessary view models under the folder "lib/view_models". Each view model contains information for widgets to render.
-    a. GameViewModel: The main view model that controls the game flow. It is the only class in our app to extend ChangeNotifier.
-        - Controls the lifecycle of the games, including starting and ending the games. 
-        - Contains a single game loop that runs at a fixed interval, configurable. The configuration is in the config file.
-        - In the game loop, each time it will run a gameIteration(timeDelta), where timeDelta is the time elapsed since the previous iteration, measured in microseconds. This delta is inspired by the game development.
-        - A gameIteration(timeDelta) is a function that will call the update(timeDelta) method of the GameStateViewModel, and also notifyListener().
-        - Contains the GameStateViewModel, which truly contains the game state of a single game. 
-        - Game always start automatically, and no pause allowed.
-    b. GameStateViewModel: The view model that contains the game state of a single game. DO NOT extend ChangeNotifier!
-        - Contains the game state of a single game. 
-        - Scores, lives, current level, etc.
-        - Provides update(timeDelta) to be called.
-        - Do not provide unused methods in this phase!
-2. Review your code, make sure it is correct and complete. No errors are allowed. 
-
 ## Phase 3 Implementation (GameStateViewModel generating NumberBlockViewModel)
 1. Now let's implement the number block generation and movement.
     a. NumberBlockViewModel: The view model that represents one number block in the game. It contains the number block state. 
@@ -63,13 +45,6 @@ Make sure your changes are minimal. Do not add unnecessary buttons, features, ti
 4. Review your code, make sure it is correct and complete. No errors are allowed. 
 
 
-## Phase 6 Implementation (Level proceeding and win game)
-1. Now, implement the level proceeding:
-    a. If enough correct blocks being slashed in the current level, the current level is completed. Currently the number is 10, but it should be configurable in the config file.
-    b. If all levels are completed, the user wins the game. Give them a button to restart the game; if not all levels are completed, proceed to the next level.
-    c. When proceeding to the next level, clear all the number blocks, and let the user to wait for several seconds (configurable) because the new level starts.
-2. Make sure the game state and lifecycle is managed properly.
-3. Review your code, make sure it is correct and complete. No errors are allowed. 
-
+## Phase 6 Implementation
 ## Phase 7 Deployment
 1. Our game is done. Do not edit any classes. Teach me how to deploy it into firebase. Just generate your answers and commands involved into the chat.

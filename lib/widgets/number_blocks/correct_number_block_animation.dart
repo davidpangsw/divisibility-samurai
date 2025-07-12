@@ -11,6 +11,7 @@ class CorrectNumberBlockAnimation extends NumberBlockAnimation {
     required super.child,
     required this.width,
     required this.height,
+    super.onAnimationTriggered,
   });
 
   @override

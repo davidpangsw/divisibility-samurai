@@ -7,11 +7,13 @@ import 'wrong_number_block_animation.dart';
 class NumberBlock extends StatelessWidget {
   final int number;
   final bool isCorrect;
+  final VoidCallback? onSlashed;
 
   const NumberBlock({
     super.key,
     required this.number,
     required this.isCorrect,
+    this.onSlashed,
   });
 
   @override
@@ -28,12 +30,14 @@ class NumberBlock extends StatelessWidget {
       return CorrectNumberBlockAnimation(
         width: Config.numberBlockWidth,
         height: Config.numberBlockHeight,
+        onAnimationTriggered: onSlashed,
         child: child,
       );
     } else {
       return WrongNumberBlockAnimation(
         startColor: Colors.blue,
         endColor: Colors.red,
+        onAnimationTriggered: onSlashed,
         child: child,
       );
     }
