@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'help_dialog.dart';
 
 class HelpButton extends StatelessWidget {
   const HelpButton({super.key});
@@ -8,7 +9,10 @@ class HelpButton extends StatelessWidget {
     return IconButton(
       icon: const Icon(Icons.help),
       onPressed: () {
-        // No effect for now
+        showDialog(
+          context: context,
+          builder: (context) => const HelpDialog(),
+        );
       },
     );
   }
