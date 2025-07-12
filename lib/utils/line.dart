@@ -13,7 +13,8 @@ class Line {
     
     // Select one of the four corners randomly
     final corner = random.nextInt(4);
-    final oppositeCorner = (corner + 2) % 4;
+    // Map to proper opposite corners: 0↔3, 1↔2
+    final oppositeCorner = corner ^ 3;
     
     // Generate start and end points
     final (startX, startY) = _randomPointNearCorner(corner, width, height, random);

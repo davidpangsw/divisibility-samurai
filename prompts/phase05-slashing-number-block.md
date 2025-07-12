@@ -2,7 +2,7 @@
 In this phase, we need to implement the animation of NumberBlock.
 1. Edit NumberBlock.dart
     b. NumberBlockAnimation is replaced by CorrectNumberBlockAnimation and WrongNumberBlockAnimation, depending on the isCorrect parameter.
-    d. DO NOT do other things in NumberBlock.
+    d. DO NOT do other things in NumberBlock. The color, size, and other things should appear the same before animation.
 
 2. `.../number_blocks/NumberBlockAnimation.dart`: Provides a base class for the correct and wrong number block animation.
     a. A child widget is supplied to the constructor, and is wrapped.
@@ -17,7 +17,7 @@ In this phase, we need to implement the animation of NumberBlock.
     c. The animation is like this:
         i. start color and end color are also supplied in the constructor.
         ii. The animation starts from the start color (would be supplied as blue)
-        iii. The animation ends at end color (would be supplied as red, NOT green).
+        iii. The animation ends at end color (would be supplied as red in parent).
         iv. The above animation is 100ms
         v. followed by another 300ms animation that the opacity changes from 1 to 0. (Already set in the superclass)
             
@@ -27,6 +27,10 @@ In this phase, we need to implement the animation of NumberBlock.
     c. This animation is like this:
         i. We want to animate the "slashing" of a child. The child is supposed to already have fixed height and width, like SizedBox
         ii. In constructor, given the width and height of the child, it calculates the Line using Line.randomSlashing(width, height).
-        iii. During the animation, it animates the line from start to end point. (duration as a static final variable). Partial of the line, evaluated by Line class, is drawn until complete.
+        iii. During the animation, it animates the line from start to end point. (duration as a static final variable). Partial of the line, evaluated by Line class, is drawn until complete. The line must be shown in foreground.
         iv. The above animation is 100ms
         v. followed by another 300ms animation that the opacity (of the block and the line) changes from 1 to 0.
+
+6. Check carefully (if wrong, fix):
+    - The line should start and end in opposite corners, top-left is opposite to bottom-right, top-right is opposite to bottom-left. Other pairs are not considered opposite
+    - The color change in wrong number should ends with RED color. Make sure it is not overriden or something. Remember, basic number block should have no color.
