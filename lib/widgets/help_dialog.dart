@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../configs/config.dart';
+import 'number_blocks/basic_number_block.dart';
 
 class HelpDialog extends StatelessWidget {
   const HelpDialog({super.key});
@@ -37,12 +38,56 @@ class HelpDialog extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 10),
-            const Text(
-              'Divisor = 3:\n'
-              '✓ 12 (12 ÷ 3 = 4)\n'
-              '✓ 21 (21 ÷ 3 = 7)\n'
-              '✗ 13 (not divisible by 3)\n'
-              '✗ 25 (not divisible by 3)',
+            const Text('Divisor = 3:'),
+            const SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Column(
+                  children: [
+                    SizedBox(
+                      width: 60,
+                      height: 40,
+                      child: BasicNumberBlock(number: 12),
+                    ),
+                    const SizedBox(height: 5),
+                    const Text('✓', style: TextStyle(color: Colors.green, fontSize: 16)),
+                  ],
+                ),
+                Column(
+                  children: [
+                    SizedBox(
+                      width: 60,
+                      height: 40,
+                      child: BasicNumberBlock(number: 21),
+                    ),
+                    const SizedBox(height: 5),
+                    const Text('✓', style: TextStyle(color: Colors.green, fontSize: 16)),
+                  ],
+                ),
+                Column(
+                  children: [
+                    SizedBox(
+                      width: 60,
+                      height: 40,
+                      child: BasicNumberBlock(number: 13),
+                    ),
+                    const SizedBox(height: 5),
+                    const Text('✗', style: TextStyle(color: Colors.red, fontSize: 16)),
+                  ],
+                ),
+                Column(
+                  children: [
+                    SizedBox(
+                      width: 60,
+                      height: 40,
+                      child: BasicNumberBlock(number: 25),
+                    ),
+                    const SizedBox(height: 5),
+                    const Text('✗', style: TextStyle(color: Colors.red, fontSize: 16)),
+                  ],
+                ),
+              ],
             ),
           ],
         ),

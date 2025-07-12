@@ -1,12 +1,9 @@
 ## Phase 5: Animation of NumberBlock
 In this phase, we need to implement the animation of NumberBlock.
-0. Ensure BasicNumberBlock is transparent.
 1. Edit NumberBlock.dart
-    a. NumberBlock should also accept "isCorrect" parameter, and apply different animation based on it.
     b. NumberBlockAnimation is replaced by CorrectNumberBlockAnimation and WrongNumberBlockAnimation, depending on the isCorrect parameter.
     c. NumberBlock, no matter correct or wrong, should be blue.
     d. DO NOT do other things in NumberBlock.
-    e. Make sure you supply the parameter in HelpDialog.
 
 2. Go to the internet to make sure you know the latest way to write an Animation. Do not learn outdated / wrong things.
 

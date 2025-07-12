@@ -5,12 +5,6 @@
     c. The details of the animation will be described later. Just write a empty or simple Animation inside `lib/widgets/number_blocks/number_block_animation.dart`.
     d. All NumberBlocks should appear the same except for the number.
     e. DO NOT do other things in NumberBlock. (Do not add useless or stupid fields. Do not change the color of number blocks, do not do any stupid things)
-
-2. BasicNumberBlock and HelpDialog
-    a. Remove the padding EdgeInsets and rounded corner of BasicNumberBlock.
-    b. Remove the color of BasicNumberBlock.
-    c. In HelpDialog:
-        i. Replace BasicNumberBlock by NumberBlock
-        ii. Only use divisor=3 as examples. Some blocks should be divisible while some are not. (Do not split by divisors, this sounds very stupid. Just one divisor with several examples)
-    d. DO NOT change other things in BasicNumberBlock
-    e. Review HelpDialog. Remove repeated code or explanation or headings. Keep it as small as possible
+    f. In HelpDialog, replace BasicNumberBlock by NumberBlock
+    g. NumberBlock should also accept "isCorrect" parameter, we will use it later. Make sure you supply the parameter in HelpDialog.
+    h. DO NOT change other things in BasicNumberBlock
