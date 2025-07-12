@@ -11,8 +11,10 @@ class Config {
   static const int levelTransitionDelaySeconds = 3;
   
   static const double playAreaWidth = 400.0;
-  static const double playAreaHeight = 600.0;
+  static const double playAreaHeight = 400.0;
   
   static const double numberBlockWidth = 60.0;
   static const double numberBlockHeight = 40.0;
+  
+  static const int maxNumberBlocksInPlayArea = 1;
 }

@@ -1,10 +1,5 @@
 
 
-    
-    
-    It contains a scoreboard that display the StatsBar, which contains the score, level, lives, divisor, etc. on the same row. GameWidget also contains the PlayArea.
-    e. PlayArea: This is the main play area with fixed size. Playable in mobiles and webs. The size should be compatible with most of the devices. Details would be explained later. Make sure the width and height are fixed.
-
 
 
 
@@ -57,25 +52,6 @@ Make sure your changes are minimal. Do not add unnecessary buttons, features, ti
 3. Implement PlayArea: It is a widget that contains a list of GravityNumberBlock.
 
 
-## Phase 4 Implementation (Reorganizing help dialog)
-1. The help dialog is a huge mess. I will guide you to reorganize it.
-2. First, Extract out the whole AlertDialog into a new widget called HelpDialog.
-3. Group the content of the HelpDialog into three sections. Each section corresponds to a class and written in the same file in HelpDialog:
-    a. The "How to play" section that explain the rules of the game.
-    b. The example section that display number blocks as examples to explain.
-4. Make sure your help dialog is correct and complete. No errors are allowed. 
-5. Removing unnecessary spacing SizedBox. Use proper technique.
-
-## Phase 5 Implementation (Slashing animation)
-1. Revamp the number block first.
-    a. Now, NumberBlock is just a block of number, and should not contain about animation, position or any calculations. Do not animate ANY things or opacity. I don't want to see any Animation here
-    b. Create a class, MovingNumberBlock, that actually do the moving and read the data of number_block_view_model.
-    c. Fixed classes that depends on NumberBlock.
-2. Define SlashingNumberBlock that will wrap and animate NumberBlock as follows:
-    - When clicked, randomly draw a straight line from one side to another side, in 3 seconds.
-    - During the animation, partial of the line is drawn until complete.
-3. Add the SlashingNumberBlock to the top of homepage to test your animation.
-4. Make sure your change is correct and complete. No errors are allowed.  No ParentDataWidget Error is allowed 
 
 ## Phase 5 Implementation (Slashing)
 1. Implement slashing to the block generated in the playarea:

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'help_button.dart';
-import 'game_widget.dart';
+import 'game_widget/game_widget.dart';
 
 class Homepage extends StatelessWidget {
   const Homepage({super.key});
