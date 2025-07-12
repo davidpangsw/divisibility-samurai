@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../configs/config.dart';
-import 'number_blocks/basic_number_block.dart';
+import 'number_blocks/number_block.dart';
 
 class HelpDialog extends StatelessWidget {
   const HelpDialog({super.key});
@@ -45,44 +45,28 @@ class HelpDialog extends StatelessWidget {
               children: [
                 Column(
                   children: [
-                    SizedBox(
-                      width: 60,
-                      height: 40,
-                      child: BasicNumberBlock(number: 12),
-                    ),
+                    NumberBlock(number: 12, isCorrect: true),
                     const SizedBox(height: 5),
                     const Text('✓', style: TextStyle(color: Colors.green, fontSize: 16)),
                   ],
                 ),
                 Column(
                   children: [
-                    SizedBox(
-                      width: 60,
-                      height: 40,
-                      child: BasicNumberBlock(number: 21),
-                    ),
+                    NumberBlock(number: 21, isCorrect: true),
                     const SizedBox(height: 5),
                     const Text('✓', style: TextStyle(color: Colors.green, fontSize: 16)),
                   ],
                 ),
                 Column(
                   children: [
-                    SizedBox(
-                      width: 60,
-                      height: 40,
-                      child: BasicNumberBlock(number: 13),
-                    ),
+                    NumberBlock(number: 13, isCorrect: false),
                     const SizedBox(height: 5),
                     const Text('✗', style: TextStyle(color: Colors.red, fontSize: 16)),
                   ],
                 ),
                 Column(
                   children: [
-                    SizedBox(
-                      width: 60,
-                      height: 40,
-                      child: BasicNumberBlock(number: 25),
-                    ),
+                    NumberBlock(number: 25, isCorrect: false),
                     const SizedBox(height: 5),
                     const Text('✗', style: TextStyle(color: Colors.red, fontSize: 16)),
                   ],

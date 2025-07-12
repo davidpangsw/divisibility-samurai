@@ -8,3 +8,4 @@
     f. In HelpDialog, replace BasicNumberBlock by NumberBlock
     g. NumberBlock should also accept "isCorrect" parameter, we will use it later. Make sure you supply the parameter in HelpDialog.
     h. DO NOT change other things in BasicNumberBlock
+    i. NumberBlock, no matter correct or wrong, should be blue.
