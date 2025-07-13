@@ -89,6 +89,16 @@ class AboutGameDialog extends StatelessWidget {
               'Pixabay',
               'https://pixabay.com/music//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=272176',
             ),
+            const SizedBox(height: 4),
+            
+            _buildAttribution(
+              'Samurai image from ',
+              'OpenArt',
+              'https://openart.ai/',
+              ' - AI generated artwork',
+              '',
+              '',
+            ),
           ],
         ),
       ),
@@ -109,31 +119,39 @@ class AboutGameDialog extends StatelessWidget {
     String linkText2,
     String url2,
   ) {
+    List<TextSpan> spans = [
+      TextSpan(text: prefix),
+      TextSpan(
+        text: linkText1,
+        style: const TextStyle(
+          color: Colors.blue,
+          decoration: TextDecoration.underline,
+        ),
+        recognizer: TapGestureRecognizer()
+          ..onTap = () => _launchUrl(url1),
+      ),
+      TextSpan(text: middle),
+    ];
+    
+    // Only add second link if it's not empty
+    if (linkText2.isNotEmpty && url2.isNotEmpty) {
+      spans.add(
+        TextSpan(
+          text: linkText2,
+          style: const TextStyle(
+            color: Colors.blue,
+            decoration: TextDecoration.underline,
+          ),
+          recognizer: TapGestureRecognizer()
+            ..onTap = () => _launchUrl(url2),
+        ),
+      );
+    }
+    
     return RichText(
       text: TextSpan(
         style: const TextStyle(color: Colors.black87, fontSize: 12),
-        children: [
-          TextSpan(text: prefix),
-          TextSpan(
-            text: linkText1,
-            style: const TextStyle(
-              color: Colors.blue,
-              decoration: TextDecoration.underline,
-            ),
-            recognizer: TapGestureRecognizer()
-              ..onTap = () => _launchUrl(url1),
-          ),
-          TextSpan(text: middle),
-          TextSpan(
-            text: linkText2,
-            style: const TextStyle(
-              color: Colors.blue,
-              decoration: TextDecoration.underline,
-            ),
-            recognizer: TapGestureRecognizer()
-              ..onTap = () => _launchUrl(url2),
-          ),
-        ],
+        children: spans,
       ),
     );
   }

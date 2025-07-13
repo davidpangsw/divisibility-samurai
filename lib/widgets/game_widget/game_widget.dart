@@ -74,7 +74,7 @@ class _GameWidgetState extends State<GameWidget> {
                             ClipRRect(
                               borderRadius: BorderRadius.circular(12),
                               child: Image.asset(
-                                'images/samurai/openart-image_oOwjbEGr_1752429681294_raw.jpg',
+                                'assets/images/samurai/openart-image_oOwjbEGr_1752429681294_raw.jpg',
                                 width: 150,
                                 height: 100,
                                 fit: BoxFit.cover,

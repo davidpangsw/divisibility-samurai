@@ -1,10 +1,12 @@
 import 'package:universal_html/html.dart' as html;
+import 'package:flutter/services.dart';
 import 'dart:math';
 import '../configs/config.dart';
 
 class SoundManager {
   static bool _soundEnabled = true;
   static final List<html.AudioElement> _slashAudios = [];
+  static final Map<String, String> _audioUrls = {}; // Cache for asset URLs
   static final Random _random = Random();
   static html.AudioElement? _currentBgm;
   static double _bgmVolume = 0.25; // Default 25%
@@ -22,13 +24,38 @@ class SoundManager {
       // Initialize all slash sounds from config
       final slashSoundPaths = Config.slashSoundPaths;
       for (String soundPath in slashSoundPaths) {
-        final audio = html.AudioElement('assets/$soundPath');
-        audio.preload = 'auto';
-        audio.volume = _sfxVolume;
-        _slashAudios.add(audio);
+        final audioUrl = await _getAssetUrl('assets/$soundPath');
+        if (audioUrl != null) {
+          final audio = html.AudioElement(audioUrl);
+          audio.preload = 'auto';
+          audio.volume = _sfxVolume;
+          _slashAudios.add(audio);
+        }
       }
     } catch (e) {
       // Silent fail
+    }
+  }
+  
+  /// Get proper asset URL using Flutter's asset bundle
+  static Future<String?> _getAssetUrl(String assetPath) async {
+    try {
+      // Check cache first
+      if (_audioUrls.containsKey(assetPath)) {
+        return _audioUrls[assetPath];
+      }
+      
+      // Load asset using Flutter's asset bundle
+      final bytes = await rootBundle.load(assetPath);
+      final blob = html.Blob([bytes.buffer.asUint8List()]);
+      final url = html.Url.createObjectUrl(blob);
+      
+      // Cache the URL
+      _audioUrls[assetPath] = url;
+      return url;
+    } catch (e) {
+      // If Flutter asset loading fails, try direct path (fallback)
+      return 'assets/$assetPath';
     }
   }
   
@@ -150,27 +177,30 @@ class SoundManager {
       if (musicPaths.isNotEmpty) {
         // Randomly select a music track
         final selectedPath = musicPaths[_random.nextInt(musicPaths.length)];
-        _currentBgm = html.AudioElement('assets/$selectedPath');
-        _currentBgm!.volume = _bgmVolume;
-        _currentBgm!.loop = true; // Loop forever
+        final audioUrl = await _getAssetUrl('assets/$selectedPath');
+        if (audioUrl != null) {
+          _currentBgm = html.AudioElement(audioUrl);
+          _currentBgm!.volume = _bgmVolume;
+          _currentBgm!.loop = true; // Loop forever
         
-        // Add event listeners to handle audio events
-        _currentBgm!.onEnded.listen((_) {
-          // In case loop fails, restart manually
-          if (_currentBgm != null && _currentBgmTier == tier) {
-            _currentBgm!.currentTime = 0;
-            _currentBgm!.play();
-          }
-        });
-        
-        _currentBgm!.onError.listen((_) {
-          // Handle audio errors
-          _currentBgm = null;
-          _currentBgmTier = null;
-        });
-        
-        await _currentBgm!.play();
-        _currentBgmTier = tier; // Set current tier after successful play
+          // Add event listeners to handle audio events
+          _currentBgm!.onEnded.listen((_) {
+            // In case loop fails, restart manually
+            if (_currentBgm != null && _currentBgmTier == tier) {
+              _currentBgm!.currentTime = 0;
+              _currentBgm!.play();
+            }
+          });
+          
+          _currentBgm!.onError.listen((_) {
+            // Handle audio errors
+            _currentBgm = null;
+            _currentBgmTier = null;
+          });
+          
+          await _currentBgm!.play();
+          _currentBgmTier = tier; // Set current tier after successful play
+        }
       }
     } catch (e) {
       // Silent fail

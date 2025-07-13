@@ -43,3 +43,27 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Firebase
+# Firebase specific
+.firebase/
+firebase-debug.log
+firebase-debug.*.log
+# If you are using Firebase Functions
+functions/node_modules/
+functions/lib/
+# If you are using Firebase Hosting
+public/node_modules/
+# If you are using Firebase with a framework like Flutter or React
+# Add framework-specific ignores here, e.g.,
+# .dart_tool/
+# .flutter-plugins-dependencies
+# .flutter-plugins
+# .packages
+# build/
+# .env
+# .env.local
+# .env.*.local
+# If you are using a secrets file
+# firebase_config.js
+# google-services.json
