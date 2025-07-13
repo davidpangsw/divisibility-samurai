@@ -19,7 +19,7 @@ class _PlayAreaState extends State<PlayArea> with TickerProviderStateMixin {
   late AnimationController _animationController;
   final List<AnimatedNumberBlock> _blocks = [];
   int _frameCounter = 0;
-  static final int _blockGenerationInterval = (Config.blockGenerationIntervalMs / (1000 / 60)).round();
+  static final int _blockGenerationInterval = (Config.blockGenerationInterval.inMilliseconds / (1000 / 60)).round();
 
   @override
   void initState() {
@@ -85,17 +85,35 @@ class _PlayAreaState extends State<PlayArea> with TickerProviderStateMixin {
     });
   }
 
+  void stopAllAnimationsAndClearBlocks() {
+    // Stop the physics animation controller to prevent new block generation
+    _animationController.stop();
+    
+    setState(() {
+      _blocks.clear();
+    });
+  }
+
+  void resumeGame() {
+    // Restart the physics animation controller
+    _animationController.repeat();
+  }
+
   void _handleBlockSlashed(AnimatedNumberBlock block) {
+    final gameViewModel = Provider.of<GameViewModel>(context, listen: false);
+    
+    // Only process if game is active
+    if (!gameViewModel.isGameActive) return;
+    
     block.isRemoved = true;
     block.isAnimating = true;
     
     // Notify game view model about the slash
-    final gameViewModel = Provider.of<GameViewModel>(context, listen: false);
-    gameViewModel.onBlockSlashed(block.isCorrect);
+    gameViewModel.onBlockSlashed(block.isCorrect, block.number);
     
     // Mark animation as done after duration
     // mounted check ensures widget hasn't been disposed
-    Future.delayed(Duration(milliseconds: Config.blockCleanupDelayMs), () {
+    Future.delayed(Config.blockCleanupDelay, () {
       if (mounted) {
         setState(() {
           block.isAnimating = false;

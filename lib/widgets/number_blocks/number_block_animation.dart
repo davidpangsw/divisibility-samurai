@@ -20,7 +20,7 @@ abstract class NumberBlockAnimationState<T extends NumberBlockAnimation> extends
   void initState() {
     super.initState();
     _controller = AnimationController(
-      duration: Duration(milliseconds: Config.numberBlockAnimationDurationMs),
+      duration: Config.numberBlockAnimationDuration,
       vsync: this,
     );
     
