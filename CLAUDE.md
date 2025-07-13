@@ -108,3 +108,16 @@ This is a Flutter math game called "Divisibility Samurai" where players identify
 - **Settings Persistence**: Use localStorage for web, ensure graceful fallbacks
 - **Asset Organization**: Follow tier-based structure for audio/visual assets
 - **Performance**: Maintain 60 FPS with efficient physics calculations
+
+## Deployment
+
+Firebase is configured with a predeploy hook to automatically build before deployment:
+
+```bash
+firebase deploy
+```
+
+- Automatically runs `flutter build web` before deploy
+- Configured in `firebase.json` with `"predeploy": ["flutter build web"]`
+- Ensures you never deploy stale builds
+- No need for manual build steps or custom scripts
