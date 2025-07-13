@@ -7,16 +7,21 @@ class SoundManager {
   static final List<html.AudioElement> _slashAudios = [];
   static final Random _random = Random();
   static html.AudioElement? _currentBgm;
-  static double _bgmVolume = 0.7;
-  static double _sfxVolume = 0.7;
+  static double _bgmVolume = 0.25; // Default 25%
+  static double _sfxVolume = 0.5; // Default 50%
   static bool _userInteracted = false;
   static String? _pendingBgmTier;
+  static String? _currentBgmTier; // Track current tier to prevent restarts
   
   /// Initialize sound system  
   static Future<void> initialize() async {
     try {
-      // Initialize all slash sounds
-      for (String soundPath in Config.slashSoundPaths) {
+      // Load persisted volume settings
+      _loadVolumeSettings();
+      
+      // Initialize all slash sounds from config
+      final slashSoundPaths = Config.slashSoundPaths;
+      for (String soundPath in slashSoundPaths) {
         final audio = html.AudioElement('assets/$soundPath');
         audio.preload = 'auto';
         audio.volume = _sfxVolume;
@@ -35,8 +40,9 @@ class SoundManager {
     if (!_userInteracted) {
       _userInteracted = true;
       if (_pendingBgmTier != null) {
-        await _playBgmInternal(_pendingBgmTier!);
+        final pendingTier = _pendingBgmTier!;
         _pendingBgmTier = null;
+        await _playBgmInternal(pendingTier);
       }
     }
     
@@ -71,6 +77,7 @@ class SoundManager {
       for (html.AudioElement audio in _slashAudios) {
         audio.volume = _sfxVolume;
       }
+      _saveVolumeSettings();
     } catch (e) {
       // Silent fail
     }
@@ -83,6 +90,7 @@ class SoundManager {
       if (_currentBgm != null) {
         _currentBgm!.volume = _bgmVolume;
       }
+      _saveVolumeSettings();
     } catch (e) {
       // Silent fail
     }
@@ -92,21 +100,27 @@ class SoundManager {
   static Future<void> playBgmForTier(String tier) async {
     if (!_soundEnabled) return;
     
-    if (!_userInteracted) {
-      // Store the tier to play after user interaction
-      _pendingBgmTier = tier;
+    // Don't restart BGM if same tier is already playing
+    if (_currentBgmTier == tier && _currentBgm != null && !_currentBgm!.paused) {
       return;
     }
     
-    await _playBgmInternal(tier);
+    // Try to play immediately, store as pending if it fails due to user interaction policy
+    try {
+      await _playBgmInternal(tier);
+    } catch (e) {
+      // If it fails due to user interaction policy, store as pending
+      _pendingBgmTier = tier;
+    }
   }
   
   /// Internal method to actually play BGM
   static Future<void> _playBgmInternal(String tier) async {
     try {
-      // Stop current BGM
+      // Stop current BGM completely
       if (_currentBgm != null) {
         _currentBgm!.pause();
+        _currentBgm!.currentTime = 0; // Reset to beginning
         _currentBgm = null;
       }
       
@@ -123,6 +137,7 @@ class SoundManager {
           musicPaths = Config.goldBgmPaths;
           break;
         default:
+          _currentBgmTier = null;
           return;
       }
       
@@ -132,10 +147,29 @@ class SoundManager {
         _currentBgm = html.AudioElement('assets/$selectedPath');
         _currentBgm!.volume = _bgmVolume;
         _currentBgm!.loop = true; // Loop forever
+        
+        // Add event listeners to handle audio events
+        _currentBgm!.onEnded.listen((_) {
+          // In case loop fails, restart manually
+          if (_currentBgm != null && _currentBgmTier == tier) {
+            _currentBgm!.currentTime = 0;
+            _currentBgm!.play();
+          }
+        });
+        
+        _currentBgm!.onError.listen((_) {
+          // Handle audio errors
+          _currentBgm = null;
+          _currentBgmTier = null;
+        });
+        
         await _currentBgm!.play();
+        _currentBgmTier = tier; // Set current tier after successful play
       }
     } catch (e) {
       // Silent fail
+      _currentBgm = null;
+      _currentBgmTier = null;
     }
   }
   
@@ -144,8 +178,55 @@ class SoundManager {
     try {
       if (_currentBgm != null) {
         _currentBgm!.pause();
+        _currentBgm!.currentTime = 0;
         _currentBgm = null;
       }
+      _currentBgmTier = null;
+    } catch (e) {
+      // Silent fail
+    }
+  }
+  
+  /// Reset sound manager state (for game restart)
+  static void reset() {
+    stopBgm();
+    _userInteracted = false;
+    _pendingBgmTier = null;
+  }
+  
+  /// Load volume settings from browser localStorage
+  static void _loadVolumeSettings() {
+    try {
+      final storage = html.window.localStorage;
+      
+      // Load BGM volume
+      final bgmVolumeStr = storage['math_game_bgm_volume'];
+      if (bgmVolumeStr != null) {
+        final bgmVolume = double.tryParse(bgmVolumeStr);
+        if (bgmVolume != null) {
+          _bgmVolume = bgmVolume.clamp(0.0, 1.0);
+        }
+      }
+      
+      // Load SFX volume
+      final sfxVolumeStr = storage['math_game_sfx_volume'];
+      if (sfxVolumeStr != null) {
+        final sfxVolume = double.tryParse(sfxVolumeStr);
+        if (sfxVolume != null) {
+          _sfxVolume = sfxVolume.clamp(0.0, 1.0);
+        }
+      }
+    } catch (e) {
+      // Silent fail - use defaults
+    }
+  }
+  
+  /// Save volume settings to browser localStorage
+  static void _saveVolumeSettings() {
+    try {
+      final storage = html.window.localStorage;
+      storage['math_game_bgm_volume'] = _bgmVolume.toString();
+      storage['math_game_sfx_volume'] = _sfxVolume.toString();
     } catch (e) {
       // Silent fail
     }

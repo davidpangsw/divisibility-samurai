@@ -1,11 +1,12 @@
 import 'package:flutter/foundation.dart';
 import 'game_state_view_model.dart';
+import '../utils/sound_manager.dart';
 
-enum GameStatus { playing, paused, levelCompleted, gameWon, gameLost }
+enum GameStatus { notStarted, playing, paused, levelCompleted, gameWon, gameLost }
 
 class GameViewModel extends ChangeNotifier {
   final GameStateViewModel _gameState = GameStateViewModel();
-  GameStatus _status = GameStatus.playing;
+  GameStatus _status = GameStatus.notStarted;
   GameStatus? _previousStatus;
 
   GameStateViewModel get gameState => _gameState;
@@ -14,11 +15,13 @@ class GameViewModel extends ChangeNotifier {
   bool get hasStatusChanged => _status != _previousStatus;
 
   GameViewModel() {
-    _startGame();
+    // Don't auto-start game, wait for user to click start button
+    _gameState.resetGame();
   }
 
   void _startGame() {
     _gameState.resetGame();
+    _gameState.startGameAudio();
     _setStatus(GameStatus.playing);
   }
 
@@ -36,13 +39,21 @@ class GameViewModel extends ChangeNotifier {
     if (!isGameActive) return;
 
     if (isCorrect) {
-      _gameState.increaseScore();
+      _gameState.increaseScore(number);
       _checkLevelCompletion();
     } else {
-      _gameState.deductLife();
+      _gameState.deductLife(number);
       _gameState.addWrongAnswer(number);
       _checkGameLost();
     }
+    notifyListeners();
+  }
+
+  void onCorrectBlockDisappeared() {
+    if (!isGameActive) return;
+    
+    _gameState.incrementCorrectBlockDisappeared();
+    _checkGameLost();
     notifyListeners();
   }
 
@@ -50,6 +61,8 @@ class GameViewModel extends ChangeNotifier {
     if (_gameState.isLevelCompleted) {
       if (_gameState.isGameWon) {
         _setStatus(GameStatus.gameWon);
+        // Stop BGM when game is won
+        SoundManager.stopBgm();
       } else {
         _setStatus(GameStatus.levelCompleted);
       }
@@ -59,6 +72,8 @@ class GameViewModel extends ChangeNotifier {
   void _checkGameLost() {
     if (_gameState.isGameLost) {
       _setStatus(GameStatus.gameLost);
+      // Stop BGM when game is lost
+      SoundManager.stopBgm();
     }
   }
 
@@ -67,6 +82,10 @@ class GameViewModel extends ChangeNotifier {
       _gameState.nextLevel();
       _setStatus(GameStatus.playing);
     }
+  }
+
+  void startGame() {
+    _startGame();
   }
 
   void restartGame() {

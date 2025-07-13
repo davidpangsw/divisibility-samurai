@@ -1,3 +1,5 @@
+import 'dart:math';
+
 class Config {
   // Game mechanics
   static const List<int> divisors = [2, 3, 4, 5, 6, 8, 9, 10, 12];
@@ -21,9 +23,20 @@ class Config {
     String tier = getLevelTier(level);
     switch (tier) {
       case 'Bronze': return 5;
-      case 'Silver': return 4;
-      case 'Gold': return 3;
-      default: return 3;
+      case 'Silver': return 5;
+      case 'Gold': return 5;
+      default: return 5;
+    }
+  }
+  
+  // Block limit system - tracks correct blocks that disappear
+  static int getBlockLimitForLevel(int level) {
+    String tier = getLevelTier(level);
+    switch (tier) {
+      case 'Bronze': return 30; // 5 correct before 30 correct blocks disappear
+      case 'Silver': return 30; // 3 correct before 30 correct blocks disappear  
+      case 'Gold': return 30;   // 2 correct before 30 correct blocks disappear
+      default: return 30;
     }
   }
   static const int totalLives = 5;
@@ -33,26 +46,43 @@ class Config {
   static const double blockGenerationChance = 0.9;
   static const double correctBlockProbability = 0.5; // Probability of generating a divisible block
   
-  // Physics - Mobile optimized
-  static const double gravity = 500.0;
+  // Physics - Mobile optimized with tier-based difficulty
+  static double getGravityForLevel(int level) {
+    String tier = getLevelTier(level);
+    switch (tier) {
+      case 'Bronze': return 200.0; // Moderate difficulty
+      case 'Silver': return 150.0; // Easier than Bronze
+      case 'Gold': return 100.0;   // Easiest tier
+      default: return 200.0;
+    }
+  }
   static const double bounceDamping = 0.8;
   static const double minHorizontalVelocity = -100.0; // Adjusted for mobile width (360px)
   static const double maxHorizontalVelocity = 100.0;
-  static const double minVerticalVelocity = -450.0; // Reaches ~40% height (192px)
-  static const double maxVerticalVelocity = -630.0; // Reaches ~80% height (384px)
+  // Tier-based vertical velocities to maintain consistent 50-80% height reach
+  static double getMinVerticalVelocityForLevel(int level) {
+    double gravity = getGravityForLevel(level);
+    double targetHeight = playAreaHeight * 0.5; // 50% height
+    return -sqrt(2 * gravity * targetHeight); // v = √(2gh)
+  }
+  
+  static double getMaxVerticalVelocityForLevel(int level) {
+    double gravity = getGravityForLevel(level);
+    double targetHeight = playAreaHeight * 0.8; // 80% height
+    return -sqrt(2 * gravity * targetHeight); // v = √(2gh)
+  }
   
   // Animation
   static const Duration numberBlockAnimationDuration = Duration(milliseconds: 400);
   static const Duration blockCleanupDelay = numberBlockAnimationDuration;
   
-  // Sound effects
+  // Sound files - hardcoded but organized
   static const List<String> slashSoundPaths = [
     'sounds/effects/slash/sword-sound-2-36274.mp3',
   ];
   
-  // Background music
   static const List<String> bronzeBgmPaths = [
-    'sounds/music/bronze-bgm/soft-background-music-368633.mp3',
+    'sounds/music/bronze-bgm/jazz-lounge-elevator-music-332339.mp3',
   ];
   
   static const List<String> silverBgmPaths = [

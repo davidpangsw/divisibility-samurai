@@ -8,10 +8,11 @@ class PhysicsEngine {
   /// Returns new position and velocity after physics calculations
   static (Vector position, Vector velocity) updateSingleBlock(
     Vector position, 
-    Vector velocity
+    Vector velocity,
+    double gravity
   ) {
     // Apply gravity
-    final newVelocity = velocity + Vector(0, Config.gravity * deltaTime);
+    final newVelocity = velocity + Vector(0, gravity * deltaTime);
     
     // Update position
     var newPosition = position + (newVelocity * deltaTime);

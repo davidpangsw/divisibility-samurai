@@ -30,8 +30,7 @@ class _PlayAreaState extends State<PlayArea> with TickerProviderStateMixin {
     )..repeat();
     
     _animationController.addListener(_updatePhysics);
-    // Start with one block
-    _tryGenerateBlock();
+    // Don't auto-generate blocks, wait for game to start
   }
 
   @override
@@ -41,10 +40,14 @@ class _PlayAreaState extends State<PlayArea> with TickerProviderStateMixin {
   }
 
   void _tryGenerateBlock() {
+    final gameViewModel = Provider.of<GameViewModel>(context, listen: false);
+    
+    // Only generate blocks if game is active
+    if (!gameViewModel.isGameActive) return;
+    
     // Simple random generation up to max limit
     if (_blocks.length < Config.maxNumberBlocksInPlayArea && 
         Random().nextDouble() < Config.blockGenerationChance) {
-      final gameViewModel = Provider.of<GameViewModel>(context, listen: false);
       final block = BlockFactory.createBlock(gameViewModel.gameState.divisor, gameViewModel.gameState.level);
       
       setState(() {
@@ -54,6 +57,10 @@ class _PlayAreaState extends State<PlayArea> with TickerProviderStateMixin {
   }
 
   void _updatePhysics() {
+    final gameViewModel = Provider.of<GameViewModel>(context, listen: false);
+    final currentLevel = gameViewModel.gameState.level;
+    final gravity = Config.getGravityForLevel(currentLevel);
+    
     setState(() {
       // Update physics for each block and mark for removal if needed
       for (final block in _blocks) {
@@ -61,7 +68,8 @@ class _PlayAreaState extends State<PlayArea> with TickerProviderStateMixin {
           // Update physics only for non-removed blocks
           final (newPosition, newVelocity) = PhysicsEngine.updateSingleBlock(
             block.position, 
-            block.velocity
+            block.velocity,
+            gravity
           );
           block.position = newPosition;
           block.velocity = newVelocity;
@@ -69,6 +77,12 @@ class _PlayAreaState extends State<PlayArea> with TickerProviderStateMixin {
           // Check if block fell off screen
           if (PhysicsEngine.shouldRemoveBlock(block.position)) {
             block.isRemoved = true;
+            // Notify game view model only if a CORRECT block disappeared (only once per block)
+            if (!block.hasBeenCounted && block.isCorrect) {
+              block.hasBeenCounted = true;
+              final gameViewModel = Provider.of<GameViewModel>(context, listen: false);
+              gameViewModel.onCorrectBlockDisappeared();
+            }
           }
         }
       }
@@ -107,6 +121,7 @@ class _PlayAreaState extends State<PlayArea> with TickerProviderStateMixin {
     
     block.isRemoved = true;
     block.isAnimating = true;
+    block.hasBeenCounted = true; // Mark as counted to prevent double-counting
     
     // Notify game view model about the slash
     gameViewModel.onBlockSlashed(block.isCorrect, block.number);

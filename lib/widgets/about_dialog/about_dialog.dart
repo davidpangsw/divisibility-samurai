@@ -59,16 +59,6 @@ class AboutGameDialog extends StatelessWidget {
               'Pixabay',
               'https://pixabay.com/music//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=272176',
             ),
-            const SizedBox(height: 4),
-            
-            _buildAttribution(
-              'Music by ',
-              'Mikhail Smusev',
-              'https://pixabay.com/users/sigmamusicart-36860929/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=368633',
-              ' from ',
-              'Pixabay',
-              'https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=368633',
-            ),
           ],
         ),
       ),

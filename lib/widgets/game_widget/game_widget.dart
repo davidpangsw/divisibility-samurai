@@ -41,10 +41,56 @@ class _GameWidgetState extends State<GameWidget> {
                 level: gameViewModel.gameState.level,
                 lives: gameViewModel.gameState.lives,
                 divisor: gameViewModel.gameState.divisor,
+                remainingCorrectBlocksAllowed: gameViewModel.gameState.remainingCorrectBlocksAllowed,
+                remainingCorrectNeeded: gameViewModel.gameState.remainingCorrectNeeded,
               ),
               Stack(
                 children: [
                   PlayArea(key: _playAreaKey),
+                  if (gameViewModel.status == GameStatus.notStarted)
+                    Container(
+                      width: Config.playAreaWidth,
+                      height: Config.playAreaHeight,
+                      decoration: BoxDecoration(
+                        color: Colors.blue[50],
+                        border: Border.all(color: Colors.grey),
+                      ),
+                      child: Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Text(
+                              '🎮 Math Block Slash',
+                              style: TextStyle(
+                                color: Colors.blue,
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 15),
+                            const Text(
+                              'Find numbers divisible by the given divisor!',
+                              style: TextStyle(
+                                color: Colors.grey,
+                                fontSize: 16,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                            const SizedBox(height: 30),
+                            ElevatedButton(
+                              onPressed: () => gameViewModel.startGame(),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.blue,
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                                textStyle: const TextStyle(fontSize: 18),
+                              ),
+                              child: const Text('Start Game'),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   if (_showingLevelTransition)
                     Container(
                       width: Config.playAreaWidth,
@@ -116,7 +162,7 @@ class _GameWidgetState extends State<GameWidget> {
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
-          '$tierIcon $nextLevelTier',
+          '$tierIcon$nextDivisor',
           style: const TextStyle(
             color: Colors.yellow,
             fontSize: 18,
@@ -208,6 +254,9 @@ class _GameWidgetState extends State<GameWidget> {
         finalScore: gameViewModel.gameState.score,
         finalLevel: gameViewModel.gameState.level,
         wrongAnswers: gameViewModel.gameState.wrongAnswers,
+        correctAnswersByLevel: gameViewModel.gameState.correctAnswersByLevel,
+        wrongAnswersByLevel: gameViewModel.gameState.wrongAnswersByLevel,
+        totalBlocksMissed: gameViewModel.gameState.totalBlocksMissed,
         onRestart: () {
           Navigator.of(context).pop();
           gameViewModel.restartGame();

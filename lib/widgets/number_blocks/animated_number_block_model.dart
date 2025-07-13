@@ -8,6 +8,7 @@ class AnimatedNumberBlock {
   Vector velocity;
   bool isRemoved = false; // Block is logically removed
   bool isAnimating = false; // Block is playing animation
+  bool hasBeenCounted = false; // Track if block has been counted for disappearing
   
   AnimatedNumberBlock({
     required this.number,

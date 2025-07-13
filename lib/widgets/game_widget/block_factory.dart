@@ -27,7 +27,7 @@ class BlockFactory {
       x: _random.nextDouble() * (Config.playAreaWidth - Config.numberBlockWidth),
       y: Config.playAreaHeight - Config.numberBlockHeight,
       velocityX: Config.minHorizontalVelocity + _random.nextDouble() * (Config.maxHorizontalVelocity - Config.minHorizontalVelocity),
-      velocityY: Config.minVerticalVelocity + _random.nextDouble() * (Config.maxVerticalVelocity - Config.minVerticalVelocity),
+      velocityY: Config.getMinVerticalVelocityForLevel(level) + _random.nextDouble() * (Config.getMaxVerticalVelocityForLevel(level) - Config.getMinVerticalVelocityForLevel(level)),
     );
   }
 

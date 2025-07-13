@@ -13,6 +13,9 @@ class GameResultDialog extends StatefulWidget {
   final int finalScore;
   final int finalLevel;
   final List<String> wrongAnswers; // "number was not divisible by divisor"
+  final Map<String, List<int>> correctAnswersByLevel; // Track correct answers by level
+  final Map<String, List<int>> wrongAnswersByLevel; // Track wrong answers by level
+  final int totalBlocksMissed; // Total blocks that fell off screen
   final VoidCallback onRestart;
 
   const GameResultDialog({
@@ -21,6 +24,9 @@ class GameResultDialog extends StatefulWidget {
     required this.finalScore,
     required this.finalLevel,
     required this.wrongAnswers,
+    required this.correctAnswersByLevel,
+    required this.wrongAnswersByLevel,
+    required this.totalBlocksMissed,
     required this.onRestart,
   });
 
@@ -43,11 +49,15 @@ class _GameResultDialogState extends State<GameResultDialog> {
         final pngBytes = byteData.buffer.asUint8List();
         
         if (kIsWeb) {
-          // Web platform: Trigger browser download
+          // Web platform: Trigger browser download with timestamp
+          final now = DateTime.now();
+          final timestamp = '${now.year}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}_${now.hour.toString().padLeft(2, '0')}${now.minute.toString().padLeft(2, '0')}${now.second.toString().padLeft(2, '0')}';
+          final filename = 'math_game_result_$timestamp.png';
+          
           final blob = html.Blob([pngBytes]);
           final url = html.Url.createObjectUrlFromBlob(blob);
           final anchor = html.AnchorElement(href: url);
-          anchor.setAttribute('download', 'math_game_result.png');
+          anchor.setAttribute('download', filename);
           html.document.body?.children.add(anchor);
           anchor.click();
           html.document.body?.children.remove(anchor);
@@ -97,60 +107,136 @@ class _GameResultDialogState extends State<GameResultDialog> {
             color: widget.isWin ? Colors.green : Colors.red,
           ),
         ),
-        content: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Game summary
-              Text(
-                'Final Results:',
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 10),
-              Text('Score: ${widget.finalScore}'),
-              Text('Level: ${widget.finalLevel}/${Config.totalLevels}'),
-              
-              if (widget.wrongAnswers.isNotEmpty) ...[
+        content: SizedBox(
+          width: 400,
+          height: 500,
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Stats Section
+                _buildStatsSection(),
                 const SizedBox(height: 20),
-                const Text(
-                  'Wrong Answers:',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.red,
-                  ),
-                ),
-                const SizedBox(height: 5),
-                ...widget.wrongAnswers.map((answer) => Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 2),
-                  child: Text(
-                    '• $answer',
-                    style: const TextStyle(fontSize: 14),
-                  ),
-                )),
+                
+                // Correct Answers Section
+                if (widget.correctAnswersByLevel.isNotEmpty) ...[
+                  _buildCorrectAnswersSection(),
+                  const SizedBox(height: 20),
+                ],
+                
+                // Wrong Answers Section
+                if (widget.wrongAnswersByLevel.isNotEmpty) ...[
+                  _buildWrongAnswersSection(),
+                ],
               ],
-            ],
+            ),
           ),
         ),
         actions: [
-          TextButton.icon(
+          ElevatedButton(
+            onPressed: widget.onRestart,
+            child: const Text('Play Again'),
+          ),
+          ElevatedButton.icon(
             onPressed: _downloadImage,
             icon: const Icon(Icons.download),
             label: const Text('Save Image'),
           ),
-          TextButton(
-            onPressed: widget.onRestart,
-            child: const Text(
-              'Play Again',
-              style: TextStyle(fontSize: 16),
-            ),
-          ),
         ],
       ),
+    );
+  }
+
+  Widget _buildStatsSection() {
+    String tierEmoji = '';
+    String tier = Config.getLevelTier(widget.finalLevel);
+    if (tier == 'Bronze') {
+      tierEmoji = '🥉';
+    } else if (tier == 'Silver') {
+      tierEmoji = '🥈';
+    } else if (tier == 'Gold') {
+      tierEmoji = '🥇';
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Score: ${widget.finalScore}', style: const TextStyle(fontSize: 16)),
+        const SizedBox(height: 8),
+        Text('Total blocks missed: ${widget.totalBlocksMissed}', style: const TextStyle(fontSize: 16)),
+        const SizedBox(height: 8),
+        Text('Last level: $tierEmoji${Config.getDivisorForLevel(widget.finalLevel)}', style: const TextStyle(fontSize: 16)),
+      ],
+    );
+  }
+
+  Widget _buildCorrectAnswersSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Correct Answers:',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: Colors.green,
+          ),
+        ),
+        const SizedBox(height: 8),
+        ...widget.correctAnswersByLevel.entries.map((entry) {
+          String tierEmoji = '';
+          if (entry.key.startsWith('Bronze')) {
+            tierEmoji = '🥉';
+          } else if (entry.key.startsWith('Silver')) {
+            tierEmoji = '🥈';
+          } else if (entry.key.startsWith('Gold')) {
+            tierEmoji = '🥇';
+          }
+          
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 2),
+            child: Text(
+              '$tierEmoji${entry.key.split(' ').last} | ${entry.value.join(',')}',
+              style: const TextStyle(fontSize: 14, fontFamily: 'monospace'),
+            ),
+          );
+        }),
+      ],
+    );
+  }
+
+  Widget _buildWrongAnswersSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Wrong Answers:',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: Colors.red,
+          ),
+        ),
+        const SizedBox(height: 8),
+        ...widget.wrongAnswersByLevel.entries.map((entry) {
+          String tierEmoji = '';
+          if (entry.key.startsWith('Bronze')) {
+            tierEmoji = '🥉';
+          } else if (entry.key.startsWith('Silver')) {
+            tierEmoji = '🥈';
+          } else if (entry.key.startsWith('Gold')) {
+            tierEmoji = '🥇';
+          }
+          
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 2),
+            child: Text(
+              '$tierEmoji${entry.key.split(' ').last} ∤ ${entry.value.join(',')}',
+              style: const TextStyle(fontSize: 14, fontFamily: 'monospace'),
+            ),
+          );
+        }),
+      ],
     );
   }
 }

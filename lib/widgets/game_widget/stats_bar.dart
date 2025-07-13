@@ -6,6 +6,8 @@ class StatsBar extends StatelessWidget {
   final int level;
   final int lives;
   final int divisor;
+  final int remainingCorrectBlocksAllowed;
+  final int remainingCorrectNeeded;
 
   const StatsBar({
     super.key,
@@ -13,6 +15,8 @@ class StatsBar extends StatelessWidget {
     required this.level,
     required this.lives,
     required this.divisor,
+    required this.remainingCorrectBlocksAllowed,
+    required this.remainingCorrectNeeded,
   });
   
   String _getTierIcon(String tier) {
@@ -46,13 +50,28 @@ class StatsBar extends StatelessWidget {
         children: [
           Text('Score: $score', style: const TextStyle(fontWeight: FontWeight.bold)),
           const SizedBox(height: 4),
-          Text('Level: $tierIcon $divisor', style: const TextStyle(fontWeight: FontWeight.bold)),
+          Text('Level: $tierIcon$divisor', style: const TextStyle(fontWeight: FontWeight.bold)),
+          const SizedBox(height: 4),
+          Text('Divisor: $divisor', style: const TextStyle(fontWeight: FontWeight.bold)),
           const SizedBox(height: 4),
           Row(
             children: [
               const Text('Lives: ', style: TextStyle(fontWeight: FontWeight.bold)),
               Text('❤️' * lives, style: const TextStyle(fontSize: 16)),
             ],
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'Needed: $remainingCorrectNeeded more correct',
+            style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.green),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'Correct blocks left: $remainingCorrectBlocksAllowed',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: remainingCorrectBlocksAllowed < 10 ? Colors.red : Colors.orange,
+            ),
           ),
         ],
       ),
