@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'widgets/homepage.dart';
 import 'utils/sound_manager.dart';
 
@@ -14,9 +15,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Math Game',
+      title: 'Divisibility Samurai',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        textTheme: GoogleFonts.robotoTextTheme(),
+        fontFamily: GoogleFonts.roboto().fontFamily,
       ),
       home: const Homepage(),
     );

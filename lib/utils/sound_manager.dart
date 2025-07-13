@@ -127,6 +127,9 @@ class SoundManager {
       // Get music list for tier
       List<String> musicPaths;
       switch (tier.toLowerCase()) {
+        case 'study':
+          musicPaths = Config.studyBgmPaths;
+          break;
         case 'bronze':
           musicPaths = Config.bronzeBgmPaths;
           break;
@@ -135,6 +138,9 @@ class SoundManager {
           break;
         case 'gold':
           musicPaths = Config.goldBgmPaths;
+          break;
+        case 'campfire':
+          musicPaths = Config.campfireBgmPaths;
           break;
         default:
           _currentBgmTier = null;
@@ -200,7 +206,7 @@ class SoundManager {
       final storage = html.window.localStorage;
       
       // Load BGM volume
-      final bgmVolumeStr = storage['math_game_bgm_volume'];
+      final bgmVolumeStr = storage['divisibility_samurai_bgm_volume'];
       if (bgmVolumeStr != null) {
         final bgmVolume = double.tryParse(bgmVolumeStr);
         if (bgmVolume != null) {
@@ -209,7 +215,7 @@ class SoundManager {
       }
       
       // Load SFX volume
-      final sfxVolumeStr = storage['math_game_sfx_volume'];
+      final sfxVolumeStr = storage['divisibility_samurai_sfx_volume'];
       if (sfxVolumeStr != null) {
         final sfxVolume = double.tryParse(sfxVolumeStr);
         if (sfxVolume != null) {
@@ -225,8 +231,8 @@ class SoundManager {
   static void _saveVolumeSettings() {
     try {
       final storage = html.window.localStorage;
-      storage['math_game_bgm_volume'] = _bgmVolume.toString();
-      storage['math_game_sfx_volume'] = _sfxVolume.toString();
+      storage['divisibility_samurai_bgm_volume'] = _bgmVolume.toString();
+      storage['divisibility_samurai_sfx_volume'] = _sfxVolume.toString();
     } catch (e) {
       // Silent fail
     }

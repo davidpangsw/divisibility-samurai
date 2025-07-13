@@ -52,7 +52,7 @@ class _GameResultDialogState extends State<GameResultDialog> {
           // Web platform: Trigger browser download with timestamp
           final now = DateTime.now();
           final timestamp = '${now.year}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}_${now.hour.toString().padLeft(2, '0')}${now.minute.toString().padLeft(2, '0')}${now.second.toString().padLeft(2, '0')}';
-          final filename = 'math_game_result_$timestamp.png';
+          final filename = 'divisibility_samurai_result_$timestamp.png';
           
           final blob = html.Blob([pngBytes]);
           final url = html.Url.createObjectUrlFromBlob(blob);
@@ -150,7 +150,9 @@ class _GameResultDialogState extends State<GameResultDialog> {
   Widget _buildStatsSection() {
     String tierEmoji = '';
     String tier = Config.getLevelTier(widget.finalLevel);
-    if (tier == 'Bronze') {
+    if (tier == 'Study') {
+      tierEmoji = '📚';
+    } else if (tier == 'Bronze') {
       tierEmoji = '🥉';
     } else if (tier == 'Silver') {
       tierEmoji = '🥈';
@@ -185,7 +187,9 @@ class _GameResultDialogState extends State<GameResultDialog> {
         const SizedBox(height: 8),
         ...widget.correctAnswersByLevel.entries.map((entry) {
           String tierEmoji = '';
-          if (entry.key.startsWith('Bronze')) {
+          if (entry.key.startsWith('Study')) {
+            tierEmoji = '📚';
+          } else if (entry.key.startsWith('Bronze')) {
             tierEmoji = '🥉';
           } else if (entry.key.startsWith('Silver')) {
             tierEmoji = '🥈';
@@ -220,7 +224,9 @@ class _GameResultDialogState extends State<GameResultDialog> {
         const SizedBox(height: 8),
         ...widget.wrongAnswersByLevel.entries.map((entry) {
           String tierEmoji = '';
-          if (entry.key.startsWith('Bronze')) {
+          if (entry.key.startsWith('Study')) {
+            tierEmoji = '📚';
+          } else if (entry.key.startsWith('Bronze')) {
             tierEmoji = '🥉';
           } else if (entry.key.startsWith('Silver')) {
             tierEmoji = '🥈';

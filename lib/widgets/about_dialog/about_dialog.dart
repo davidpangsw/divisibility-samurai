@@ -23,7 +23,7 @@ class AboutGameDialog extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             const Text(
-              'Math Game',
+              'Divisibility Samurai',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
@@ -42,12 +42,42 @@ class AboutGameDialog extends StatelessWidget {
             const SizedBox(height: 4),
             
             _buildAttribution(
+              'Sound Effect by ',
+              'Mikhail',
+              'https://pixabay.com/users/soundsforyou-4861230/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=119594',
+              ' from ',
+              'Pixabay',
+              'https://pixabay.com/sound-effects//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=119594',
+            ),
+            const SizedBox(height: 4),
+            
+            _buildAttribution(
+              'Music by ',
+              'music_for_video',
+              'https://pixabay.com/users/music_for_video-22579021/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=110241',
+              ' from ',
+              'Pixabay',
+              'https://pixabay.com/music//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=110241',
+            ),
+            const SizedBox(height: 4),
+            
+            _buildAttribution(
               'Music by ',
               'Naveed Ul hassan',
               'https://pixabay.com/users/ulhassan123-24977311/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=309756',
               ' from ',
               'Pixabay',
               'https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=309756',
+            ),
+            const SizedBox(height: 4),
+            
+            _buildAttribution(
+              'Music by ',
+              'Dvir Silverstone',
+              'https://pixabay.com/users/sonican-38947841/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=324896',
+              ' from ',
+              'Pixabay',
+              'https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=324896',
             ),
             const SizedBox(height: 4),
             

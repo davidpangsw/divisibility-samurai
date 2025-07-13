@@ -21,6 +21,8 @@ class StatsBar extends StatelessWidget {
   
   String _getTierIcon(String tier) {
     switch (tier) {
+      case 'Study':
+        return '📚';
       case 'Bronze':
         return '🥉';
       case 'Silver':

@@ -51,6 +51,18 @@ class GameStateViewModel {
   bool get isLevelCompleted => correctBlocksInCurrentLevel >= Config.getBlocksNeededForLevel(level);
   bool get isGameWon => level >= Config.totalLevels && isLevelCompleted;
   bool get isBlockLimitExceeded => correctBlocksDisappearedInCurrentLevel >= Config.getBlockLimitForLevel(level) && !isLevelCompleted;
+  
+  // Check if completing this level means completing a tier
+  bool get isTierCompleted {
+    if (!isLevelCompleted) return false;
+    
+    int nextLevel = level + 1;
+    if (nextLevel > Config.totalLevels) return false; // Game won, not tier completed
+    
+    String currentTier = Config.getLevelTier(level);
+    String nextTier = Config.getLevelTier(nextLevel);
+    return currentTier != nextTier;
+  }
 
   void nextLevel() {
     if (level < Config.totalLevels) {
@@ -88,7 +100,7 @@ class GameStateViewModel {
 
   void startGameAudio() {
     // Start BGM when game actually begins
-    SoundManager.playBgmForTier('Bronze');
+    SoundManager.playBgmForTier('Study');
   }
   
   // Helper methods for level info

@@ -11,10 +11,10 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:math_game/main.dart';
 
 void main() {
-  testWidgets('Math Game app loads successfully', (WidgetTester tester) async {
+  testWidgets('Divisibility Samurai app loads successfully', (WidgetTester tester) async {
     await tester.pumpWidget(const MyApp());
 
-    expect(find.text('Math Game'), findsOneWidget);
+    expect(find.text('Divisibility Samurai'), findsOneWidget);
     expect(find.text('Game Area Placeholder'), findsOneWidget);
     expect(find.byIcon(Icons.help), findsOneWidget);
   });

@@ -20,7 +20,8 @@ class GameRuleSection extends StatelessWidget {
         Text(
           'Slash numbers divisible by the given divisor.\n\n'
           '• Wrong answers lose lives\n'
-          '• Lives refill when advancing to Silver or Gold tiers',
+          '• Lives refill when advancing to the next tier\n'
+          '• Tiers: 📚 Study → 🥉 Bronze → 🥈 Silver → 🥇 Gold',
         ),
       ],
     );

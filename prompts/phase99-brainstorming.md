@@ -4,6 +4,8 @@
 
 - Change background in different tiers? Make the feeling different?
 - Use click to generate block?
+- UI/UX
+    - Tune the game to become additive
 
 ## Deployment
 1. Our game is done. Do not edit any classes. Teach me how to deploy it into firebase. Just generate your answers and commands involved into the chat.

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../view_models/game_view_model.dart';
 import '../../configs/config.dart';
+import '../../utils/sound_manager.dart';
 import '../game_result_dialog.dart';
 import '../number_blocks/basic_number_block.dart';
 import 'stats_bar.dart';
@@ -17,6 +18,7 @@ class GameWidget extends StatefulWidget {
 class _GameWidgetState extends State<GameWidget> {
   final GlobalKey<State<PlayArea>> _playAreaKey = GlobalKey();
   bool _showingLevelTransition = false;
+  bool _showingTierTransition = false;
 
   @override
   Widget build(BuildContext context) {
@@ -60,11 +62,33 @@ class _GameWidgetState extends State<GameWidget> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             const Text(
-                              '🎮 Math Block Slash',
+                              '⚔️ Divisibility Samurai',
                               style: TextStyle(
                                 color: Colors.blue,
                                 fontSize: 24,
                                 fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 15),
+                            // Samurai image
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: Image.asset(
+                                'images/samurai/openart-image_oOwjbEGr_1752429681294_raw.jpg',
+                                width: 150,
+                                height: 100,
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Container(
+                                    width: 150,
+                                    height: 100,
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey[300],
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: const Icon(Icons.image_not_supported, size: 40, color: Colors.grey),
+                                  );
+                                },
                               ),
                             ),
                             const SizedBox(height: 15),
@@ -119,6 +143,51 @@ class _GameWidgetState extends State<GameWidget> {
                         ),
                       ),
                     ),
+                  if (_showingTierTransition)
+                    Container(
+                      width: Config.playAreaWidth,
+                      height: Config.playAreaHeight,
+                      decoration: BoxDecoration(
+                        color: Colors.indigo[900]!.withOpacity(0.95),
+                        border: Border.all(color: Colors.indigo),
+                      ),
+                      child: Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Text(
+                              '🔥 Campfire Rest 🔥',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 20),
+                            _buildCampfireRestInfo(gameViewModel),
+                            const SizedBox(height: 30),
+                            ElevatedButton(
+                              onPressed: () {
+                                setState(() => _showingTierTransition = false);
+                                gameViewModel.proceedToNextTier();
+                                // Resume the physics loop in PlayArea
+                                final playAreaState = _playAreaKey.currentState;
+                                if (playAreaState != null) {
+                                  (playAreaState as dynamic).resumeGame();
+                                }
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.amber[200],
+                                foregroundColor: Colors.brown[900],
+                                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                                textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                              ),
+                              child: _buildCampfireButtonText(gameViewModel),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                 ],
               ),
             ],
@@ -145,6 +214,9 @@ class _GameWidgetState extends State<GameWidget> {
     
     String tierIcon;
     switch (nextLevelTier) {
+      case 'Study':
+        tierIcon = '📚';
+        break;
       case 'Bronze':
         tierIcon = '🥉';
         break;
@@ -212,6 +284,9 @@ class _GameWidgetState extends State<GameWidget> {
       case GameStatus.levelCompleted:
         _handleLevelCompleted(gameViewModel);
         break;
+      case GameStatus.tierCompleted:
+        _handleTierCompleted(gameViewModel);
+        break;
       default:
         break;
     }
@@ -232,6 +307,20 @@ class _GameWidgetState extends State<GameWidget> {
         (playAreaState as dynamic).resumeGame();
       }
     });
+  }
+
+  void _handleTierCompleted(GameViewModel gameViewModel) {
+    // Stop all game activity for tier transition
+    final playAreaState = _playAreaKey.currentState;
+    if (playAreaState != null) {
+      (playAreaState as dynamic).stopAllAnimationsAndClearBlocks();
+    }
+    
+    // Start campfire BGM for the rest period
+    SoundManager.playBgmForTier('campfire');
+    
+    // Show tier transition overlay and wait for user action
+    setState(() => _showingTierTransition = true);
   }
 
   void _showLevelTransition(VoidCallback onComplete) {
@@ -268,5 +357,86 @@ class _GameWidgetState extends State<GameWidget> {
         },
       ),
     );
+  }
+
+  Widget _buildCampfireRestInfo(GameViewModel gameViewModel) {
+    final currentTier = Config.getLevelTier(gameViewModel.gameState.level);
+    final nextLevel = gameViewModel.gameState.level + 1;
+    final nextTier = Config.getLevelTier(nextLevel);
+    
+    String nextTierEmoji;
+    switch (nextTier) {
+      case 'Study': nextTierEmoji = '📚'; break;
+      case 'Bronze': nextTierEmoji = '🥉'; break;
+      case 'Silver': nextTierEmoji = '🥈'; break;
+      case 'Gold': nextTierEmoji = '🥇'; break;
+      default: nextTierEmoji = '';
+    }
+    
+    String restMessage;
+    switch (currentTier) {
+      case 'Study':
+        restMessage = 'Knowledge acquired! 📖✨\nRest by the warm fire, young scholar.';
+        break;
+      case 'Bronze':
+        restMessage = 'First trials completed! ⚔️\nLet the flames restore your spirit.';
+        break;
+      case 'Silver':
+        restMessage = 'Warrior skills sharpened! 🛡️\nThe fire whispers tales of glory.';
+        break;
+      default:
+        restMessage = 'Journey continues...\nRest and reflect by the campfire.';
+    }
+    
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const Text(
+          '🏕️',
+          style: TextStyle(fontSize: 40),
+        ),
+        const SizedBox(height: 15),
+        Text(
+          restMessage,
+          style: const TextStyle(
+            color: Colors.amber,
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: 15),
+        Text(
+          'Next journey: $nextTierEmoji $nextTier Tier',
+          style: const TextStyle(
+            color: Colors.lightBlue,
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 10),
+        const Text(
+          '❤️ Lives Restored by the Campfire',
+          style: TextStyle(
+            color: Colors.lightGreen,
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCampfireButtonText(GameViewModel gameViewModel) {
+    final nextLevel = gameViewModel.gameState.level + 1;
+    final nextTier = Config.getLevelTier(nextLevel);
+    
+    final campfireTexts = {
+      'Bronze': 'Venture Forth, Brave Soul! 🗡️',
+      'Silver': 'Answer the Call to Glory! ⚔️',
+      'Gold': 'Embrace Your Destiny! 👑',
+    };
+    
+    return Text(campfireTexts[nextTier] ?? 'Continue the Journey! 🌟');
   }
 }

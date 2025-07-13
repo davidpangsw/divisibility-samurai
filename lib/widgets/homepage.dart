@@ -11,7 +11,7 @@ class Homepage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Math Game'),
+        title: const Text('Divisibility Samurai'),
         leading: const HelpButton(),
         actions: [
           AboutButton(),
