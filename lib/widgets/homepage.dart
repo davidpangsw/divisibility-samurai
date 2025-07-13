@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'help_button.dart';
 import 'game_widget/game_widget.dart';
+import 'about_button.dart';
+import 'settings_button.dart';
 
 class Homepage extends StatelessWidget {
   const Homepage({super.key});
@@ -11,6 +13,10 @@ class Homepage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Math Game'),
         leading: const HelpButton(),
+        actions: [
+          AboutButton(),
+          SettingsButton(),
+        ],
       ),
       body: const Center(
         child: GameWidget(),

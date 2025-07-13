@@ -42,6 +42,8 @@ class GameStateViewModel {
       String currentTier = Config.getLevelTier(level);
       if (previousTier != currentTier) {
         lives = Config.totalLives; // Refill lives when entering new tier
+        // Change BGM for the new tier
+        SoundManager.playBgmForTier(currentTier);
       }
     }
   }
@@ -53,6 +55,8 @@ class GameStateViewModel {
     divisor = Config.getDivisorForLevel(1);
     correctBlocksInCurrentLevel = 0;
     wrongAnswers.clear();
+    // Start with Bronze tier BGM
+    SoundManager.playBgmForTier('Bronze');
   }
   
   // Helper methods for level info

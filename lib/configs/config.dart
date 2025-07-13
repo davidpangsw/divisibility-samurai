@@ -46,7 +46,22 @@ class Config {
   static const Duration blockCleanupDelay = numberBlockAnimationDuration;
   
   // Sound effects
-  static const String slashSoundPath = 'sounds/sword-sound-2-36274.mp3';
+  static const List<String> slashSoundPaths = [
+    'sounds/effects/slash/sword-sound-2-36274.mp3',
+  ];
+  
+  // Background music
+  static const List<String> bronzeBgmPaths = [
+    'sounds/music/bronze-bgm/soft-background-music-368633.mp3',
+  ];
+  
+  static const List<String> silverBgmPaths = [
+    'sounds/music/silver-bgm/battle-fight-music-dynamic-warrior-background-intro-theme-272176.mp3',
+  ];
+  
+  static const List<String> goldBgmPaths = [
+    'sounds/music/gold-bgm/battle-background-music-309756.mp3',
+  ];
   
   // Game lifecycle
   static const Duration levelTransitionDelay = Duration(seconds: 2);
