@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../view_models/game_view_model.dart';
 import '../../configs/config.dart';
 import '../game_result_dialog.dart';
+import '../number_blocks/basic_number_block.dart';
 import 'stats_bar.dart';
 import 'play_area.dart';
 
@@ -30,9 +31,11 @@ class _GameWidgetState extends State<GameWidget> {
             });
           }
           
-          return Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
+          return SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
               StatsBar(
                 score: gameViewModel.gameState.score,
                 level: gameViewModel.gameState.level,
@@ -50,28 +53,22 @@ class _GameWidgetState extends State<GameWidget> {
                         color: Colors.black54,
                         border: Border.all(color: Colors.grey),
                       ),
-                      child: const Center(
+                      child: Center(
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Text(
-                              'Level Complete!',
+                            const Text(
+                              '✅ Level Complete!',
                               style: TextStyle(
                                 color: Colors.white,
-                                fontSize: 24,
+                                fontSize: 22,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            SizedBox(height: 10),
-                            Text(
-                              'Preparing next level...',
-                              style: TextStyle(
-                                color: Colors.white70,
-                                fontSize: 16,
-                              ),
-                            ),
-                            SizedBox(height: 20),
-                            CircularProgressIndicator(color: Colors.white),
+                            const SizedBox(height: 15),
+                            _buildNextLevelInfo(gameViewModel),
+                            const SizedBox(height: 20),
+                            const CircularProgressIndicator(color: Colors.white),
                           ],
                         ),
                       ),
@@ -79,9 +76,71 @@ class _GameWidgetState extends State<GameWidget> {
                 ],
               ),
             ],
+            ),
           );
         },
       ),
+    );
+  }
+
+  Widget _buildNextLevelInfo(GameViewModel gameViewModel) {
+    if (gameViewModel.gameState.level >= Config.totalLevels) {
+      return const Text(
+        '🎉 Game Complete!',
+        style: TextStyle(color: Colors.amber, fontSize: 18, fontWeight: FontWeight.bold),
+      );
+    }
+    
+    final nextLevel = gameViewModel.gameState.level + 1;
+    final nextTier = gameViewModel.gameState.currentLevelTier;
+    final nextLevelTier = Config.getLevelTier(nextLevel);
+    final nextDivisor = Config.getDivisorForLevel(nextLevel);
+    final willRefillLives = nextTier != nextLevelTier;
+    
+    String tierIcon;
+    switch (nextLevelTier) {
+      case 'Bronze':
+        tierIcon = '🥉';
+        break;
+      case 'Silver':
+        tierIcon = '🥈';
+        break;
+      case 'Gold':
+        tierIcon = '🥇';
+        break;
+      default:
+        tierIcon = '';
+    }
+    
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          '$tierIcon $nextLevelTier',
+          style: const TextStyle(
+            color: Colors.yellow,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 10),
+        SizedBox(
+          width: 80,
+          height: 60,
+          child: BasicNumberBlock(number: nextDivisor, color: Colors.red),
+        ),
+        if (willRefillLives) ...[
+          const SizedBox(height: 10),
+          const Text(
+            '❤️ Lives Refilled',
+            style: TextStyle(
+              color: Colors.green,
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ],
     );
   }
 

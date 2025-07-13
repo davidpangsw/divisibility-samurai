@@ -45,7 +45,7 @@ class _PlayAreaState extends State<PlayArea> with TickerProviderStateMixin {
     if (_blocks.length < Config.maxNumberBlocksInPlayArea && 
         Random().nextDouble() < Config.blockGenerationChance) {
       final gameViewModel = Provider.of<GameViewModel>(context, listen: false);
-      final block = BlockFactory.createBlock(gameViewModel.gameState.divisor);
+      final block = BlockFactory.createBlock(gameViewModel.gameState.divisor, gameViewModel.gameState.level);
       
       setState(() {
         _blocks.add(block);

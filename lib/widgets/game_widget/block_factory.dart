@@ -5,17 +5,20 @@ import '../number_blocks/animated_number_block_model.dart';
 class BlockFactory {
   static final Random _random = Random();
 
-  static AnimatedNumberBlock createBlock(int divisor) {
+  static AnimatedNumberBlock createBlock(int divisor, int level) {
     // First, decide if this block should be correct (divisible) or not
     final shouldBeCorrect = _random.nextDouble() < Config.correctBlockProbability;
+    
+    final minNumber = Config.getMinNumberForLevel(level);
+    final maxNumber = Config.getMaxNumberForLevel(level);
     
     int number;
     if (shouldBeCorrect) {
       // Generate a number that IS divisible by the divisor
-      number = _generateDivisibleNumber(divisor);
+      number = _generateDivisibleNumber(divisor, minNumber, maxNumber);
     } else {
       // Generate a number that is NOT divisible by the divisor
-      number = _generateNonDivisibleNumber(divisor);
+      number = _generateNonDivisibleNumber(divisor, minNumber, maxNumber);
     }
     
     return AnimatedNumberBlock(
@@ -29,10 +32,10 @@ class BlockFactory {
   }
 
   /// Generates a number that IS divisible by the given divisor
-  static int _generateDivisibleNumber(int divisor) {
+  static int _generateDivisibleNumber(int divisor, int minNumber, int maxNumber) {
     // Calculate how many multiples of divisor are in our range
-    final minMultiple = (Config.minNumber / divisor).ceil();
-    final maxMultiple = (Config.maxNumber / divisor).floor();
+    final minMultiple = (minNumber / divisor).ceil();
+    final maxMultiple = (maxNumber / divisor).floor();
     
     // If no multiples exist in range, fallback to minimum multiple
     if (minMultiple > maxMultiple) {
@@ -45,20 +48,20 @@ class BlockFactory {
   }
 
   /// Generates a number that is NOT divisible by the given divisor
-  static int _generateNonDivisibleNumber(int divisor) {
+  static int _generateNonDivisibleNumber(int divisor, int minNumber, int maxNumber) {
     int number;
     int attempts = 0;
     const maxAttempts = 100; // Prevent infinite loops
     
     do {
-      number = Config.minNumber + _random.nextInt(Config.maxNumber - Config.minNumber + 1);
+      number = minNumber + _random.nextInt(maxNumber - minNumber + 1);
       attempts++;
     } while (number % divisor == 0 && attempts < maxAttempts);
     
     // If we couldn't find a non-divisible number, modify the last one slightly
     if (number % divisor == 0) {
       // Add 1 if it doesn't exceed max, otherwise subtract 1
-      if (number + 1 <= Config.maxNumber) {
+      if (number + 1 <= maxNumber) {
         number += 1;
       } else {
         number -= 1;

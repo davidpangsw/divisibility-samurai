@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../configs/config.dart';
 
 class StatsBar extends StatelessWidget {
   final int score;
@@ -13,22 +14,46 @@ class StatsBar extends StatelessWidget {
     required this.lives,
     required this.divisor,
   });
+  
+  String _getTierIcon(String tier) {
+    switch (tier) {
+      case 'Bronze':
+        return '🥉';
+      case 'Silver':
+        return '🥈';
+      case 'Gold':
+        return '🥇';
+      default:
+        return '';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    final tier = Config.getLevelTier(level);
+    final tierIcon = _getTierIcon(tier);
+    
     return Container(
+      width: Config.playAreaWidth,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.grey[200],
         border: Border.all(color: Colors.grey),
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
           Text('Score: $score', style: const TextStyle(fontWeight: FontWeight.bold)),
-          Text('Level: $level', style: const TextStyle(fontWeight: FontWeight.bold)),
-          Text('Lives: $lives', style: const TextStyle(fontWeight: FontWeight.bold)),
-          Text('Divisor: $divisor', style: const TextStyle(fontWeight: FontWeight.bold)),
+          const SizedBox(height: 4),
+          Text('Level: $tierIcon $divisor', style: const TextStyle(fontWeight: FontWeight.bold)),
+          const SizedBox(height: 4),
+          Row(
+            children: [
+              const Text('Lives: ', style: TextStyle(fontWeight: FontWeight.bold)),
+              Text('❤️' * lives, style: const TextStyle(fontSize: 16)),
+            ],
+          ),
         ],
       ),
     );

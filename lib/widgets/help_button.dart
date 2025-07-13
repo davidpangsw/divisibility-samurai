@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'help_dialog.dart';
+import 'help_dialog/help_dialog.dart';
 
 class HelpButton extends StatelessWidget {
   const HelpButton({super.key});
