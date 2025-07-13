@@ -49,6 +49,7 @@ abstract class NumberBlockAnimationState<T extends NumberBlockAnimation> extends
   void _triggerAnimation() {
     // Only trigger if animation hasn't started yet
     if (_controller.status == AnimationStatus.dismissed) {
+      // Don't play sound here - it should only play for correct answers
       _controller.forward();
     }
   }
@@ -59,15 +60,18 @@ abstract class NumberBlockAnimationState<T extends NumberBlockAnimation> extends
   Widget build(BuildContext context) {
     return MouseRegion(
       cursor: SystemMouseCursors.click,
-      onEnter: (_) => _triggerAnimation(),
-      child: AnimatedBuilder(
-        animation: _controller,
-        builder: (context, child) {
-          return Opacity(
-            opacity: _fadeOutAnimation.value,
-            child: buildAnimatedChild(),
-          );
-        },
+      onEnter: (_) => _triggerAnimation(), // Desktop: hover to slash
+      child: GestureDetector(
+        onTap: _triggerAnimation, // Mobile: tap to slash
+        child: AnimatedBuilder(
+          animation: _controller,
+          builder: (context, child) {
+            return Opacity(
+              opacity: _fadeOutAnimation.value,
+              child: buildAnimatedChild(),
+            );
+          },
+        ),
       ),
     );
   }

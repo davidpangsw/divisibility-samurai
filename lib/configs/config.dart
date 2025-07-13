@@ -16,7 +16,16 @@ class Config {
   static const int goldMinNumber = 1000;
   static const int goldMaxNumber = 9999;
   
-  static const int blocksNeededPerLevel = 3; // Reduced for testing
+  // Tier-based difficulty progression
+  static int getBlocksNeededForLevel(int level) {
+    String tier = getLevelTier(level);
+    switch (tier) {
+      case 'Bronze': return 5;
+      case 'Silver': return 4;
+      case 'Gold': return 3;
+      default: return 3;
+    }
+  }
   static const int totalLives = 5;
   static const int maxNumberBlocksInPlayArea = 2;
   static const int scorePerCorrectBlock = 100;
@@ -24,11 +33,11 @@ class Config {
   static const double blockGenerationChance = 0.9;
   static const double correctBlockProbability = 0.5; // Probability of generating a divisible block
   
-  // Physics
+  // Physics - Mobile optimized
   static const double gravity = 500.0;
   static const double bounceDamping = 0.8;
-  static const double minHorizontalVelocity = -120.0; // Adjusted for wider area
-  static const double maxHorizontalVelocity = 120.0;
+  static const double minHorizontalVelocity = -100.0; // Adjusted for mobile width (360px)
+  static const double maxHorizontalVelocity = 100.0;
   static const double minVerticalVelocity = -450.0; // Reaches ~40% height (192px)
   static const double maxVerticalVelocity = -630.0; // Reaches ~80% height (384px)
   
@@ -36,12 +45,15 @@ class Config {
   static const Duration numberBlockAnimationDuration = Duration(milliseconds: 400);
   static const Duration blockCleanupDelay = numberBlockAnimationDuration;
   
+  // Sound effects
+  static const String slashSoundPath = 'sounds/sword-sound-2-36274.mp3';
+  
   // Game lifecycle
   static const Duration levelTransitionDelay = Duration(seconds: 2);
   
-  // UI dimensions
-  static const double playAreaWidth = 480.0; // 20% wider (400 * 1.2)
-  static const double playAreaHeight = 480.0; // 20% taller (400 * 1.2)
+  // UI dimensions - Mobile optimized
+  static const double playAreaWidth = 360.0; // Mobile-friendly width
+  static const double playAreaHeight = 480.0; // Mobile-friendly height
   static const double numberBlockWidth = 60.0;
   static const double numberBlockHeight = 40.0;
   

@@ -1,4 +1,5 @@
 import '../configs/config.dart';
+import '../utils/sound_manager.dart';
 
 class GameStateViewModel {
   int score = 0;
@@ -11,6 +12,8 @@ class GameStateViewModel {
   void increaseScore() {
     score += Config.scorePerCorrectBlock;
     correctBlocksInCurrentLevel++;
+    // Play sound only for correct answers
+    SoundManager.playSlashSound();
   }
 
   void deductLife() {
@@ -24,7 +27,7 @@ class GameStateViewModel {
   }
 
   bool get isGameLost => lives <= 0;
-  bool get isLevelCompleted => correctBlocksInCurrentLevel >= Config.blocksNeededPerLevel;
+  bool get isLevelCompleted => correctBlocksInCurrentLevel >= Config.getBlocksNeededForLevel(level);
   bool get isGameWon => level >= Config.totalLevels && isLevelCompleted;
 
   void nextLevel() {
