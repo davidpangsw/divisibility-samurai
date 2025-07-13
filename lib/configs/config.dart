@@ -6,7 +6,7 @@ class Config {
   static int get totalLevels => divisors.length;
   static const int blocksNeededPerLevel = 10;
   static const int totalLives = 10;
-  static const int maxNumberBlocksInPlayArea = 3;
+  static const int maxNumberBlocksInPlayArea = 2;
   static const int scorePerCorrectBlock = 100;
   static const int blockGenerationIntervalMs = 300;
   static const double blockGenerationChance = 0.9;
@@ -21,6 +21,7 @@ class Config {
   
   // Animation
   static const int numberBlockAnimationDurationMs = 400;
+  static const int blockCleanupDelayMs = numberBlockAnimationDurationMs;
   
   // UI dimensions
   static const double playAreaWidth = 400.0;

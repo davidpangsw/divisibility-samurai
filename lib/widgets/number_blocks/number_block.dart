@@ -28,6 +28,7 @@ class NumberBlock extends StatelessWidget {
 
     if (isCorrect) {
       return CorrectNumberBlockAnimation(
+        key: key,
         width: Config.numberBlockWidth,
         height: Config.numberBlockHeight,
         onAnimationTriggered: onSlashed,
@@ -35,6 +36,7 @@ class NumberBlock extends StatelessWidget {
       );
     } else {
       return WrongNumberBlockAnimation(
+        key: key,
         startColor: Colors.blue,
         endColor: Colors.red,
         onAnimationTriggered: onSlashed,

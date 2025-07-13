@@ -19,7 +19,7 @@ class _PlayAreaState extends State<PlayArea> with TickerProviderStateMixin {
   late AnimationController _animationController;
   final List<AnimatedNumberBlock> _blocks = [];
   int _frameCounter = 0;
-  static final int _blockGenerationInterval = (Config.blockGenerationIntervalMs / (1000 / 60)).round(); // Convert ms to frames at 60fps
+  static final int _blockGenerationInterval = (Config.blockGenerationIntervalMs / (1000 / 60)).round();
 
   @override
   void initState() {
@@ -41,32 +41,40 @@ class _PlayAreaState extends State<PlayArea> with TickerProviderStateMixin {
   }
 
   void _tryGenerateBlock() {
-    // Generate blocks up to max limit, with higher chance when fewer blocks exist
-    if (_blocks.length < Config.maxNumberBlocksInPlayArea) {
-      // Always generate if no blocks exist, otherwise use chance
-      bool shouldGenerate = _blocks.isEmpty || Random().nextDouble() < Config.blockGenerationChance;
+    // Simple random generation up to max limit
+    if (_blocks.length < Config.maxNumberBlocksInPlayArea && 
+        Random().nextDouble() < Config.blockGenerationChance) {
+      final gameViewModel = Provider.of<GameViewModel>(context, listen: false);
+      final block = BlockFactory.createBlock(gameViewModel.gameState.divisor);
       
-      if (shouldGenerate) {
-        final gameViewModel = Provider.of<GameViewModel>(context, listen: false);
-        final block = BlockFactory.createBlock(gameViewModel.gameState.divisor);
-        
-        setState(() {
-          _blocks.add(block);
-        });
-      }
+      setState(() {
+        _blocks.add(block);
+      });
     }
   }
 
   void _updatePhysics() {
     setState(() {
-      PhysicsEngine.updatePhysics(_blocks);
-      
-      // Remove blocks that have fallen below the play area
-      for (int i = _blocks.length - 1; i >= 0; i--) {
-        if (PhysicsEngine.shouldRemoveBlock(_blocks[i])) {
-          _blocks.removeAt(i);
+      // Update physics for each block and mark for removal if needed
+      for (final block in _blocks) {
+        if (!block.isRemoved) {
+          // Update physics only for non-removed blocks
+          final (newPosition, newVelocity) = PhysicsEngine.updateSingleBlock(
+            block.position, 
+            block.velocity
+          );
+          block.position = newPosition;
+          block.velocity = newVelocity;
+          
+          // Check if block fell off screen
+          if (PhysicsEngine.shouldRemoveBlock(block.position)) {
+            block.isRemoved = true;
+          }
         }
       }
+      
+      // Remove blocks that are marked as removed and not animating
+      _blocks.removeWhere((block) => block.isRemoved && !block.isAnimating);
       
       // Increment frame counter and try to generate blocks periodically
       _frameCounter++;
@@ -77,10 +85,22 @@ class _PlayAreaState extends State<PlayArea> with TickerProviderStateMixin {
     });
   }
 
-  void _removeBlock(AnimatedNumberBlock block) {
-    setState(() {
-      _blocks.remove(block);
-      // Don't immediately generate a new block - let the timer handle it
+  void _handleBlockSlashed(AnimatedNumberBlock block) {
+    block.isRemoved = true;
+    block.isAnimating = true;
+    
+    // Notify game view model about the slash
+    final gameViewModel = Provider.of<GameViewModel>(context, listen: false);
+    gameViewModel.onBlockSlashed(block.isCorrect);
+    
+    // Mark animation as done after duration
+    // mounted check ensures widget hasn't been disposed
+    Future.delayed(Duration(milliseconds: Config.blockCleanupDelayMs), () {
+      if (mounted) {
+        setState(() {
+          block.isAnimating = false;
+        });
+      }
     });
   }
 
@@ -96,25 +116,14 @@ class _PlayAreaState extends State<PlayArea> with TickerProviderStateMixin {
       child: Stack(
         children: _blocks.map((block) {
           return Positioned(
+            key: ValueKey(block.id), // Preserve widget identity during rebuilds
             left: block.x,
             top: block.y,
             child: NumberBlock(
+              key: ValueKey('${block.id}_block'), // Preserve NumberBlock identity
               number: block.number,
               isCorrect: block.isCorrect,
-              onSlashed: () {
-                if (!block.isAnimating) {
-                  block.isAnimating = true;
-                  // Notify game view model about the slash
-                  final gameViewModel = Provider.of<GameViewModel>(context, listen: false);
-                  gameViewModel.onBlockSlashed(block.isCorrect);
-                  // Remove block after animation duration
-                  Future.delayed(Duration(milliseconds: Config.numberBlockAnimationDurationMs), () {
-                    if (mounted) {
-                      _removeBlock(block);
-                    }
-                  });
-                }
-              },
+              onSlashed: () => _handleBlockSlashed(block),
             ),
           );
         }).toList(),

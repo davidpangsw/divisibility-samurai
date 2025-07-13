@@ -1,18 +1,28 @@
+import '../../utils/vector.dart';
+
 class AnimatedNumberBlock {
   final int number;
   final bool isCorrect;
-  double x;
-  double y;
-  double velocityX;
-  double velocityY;
-  bool isAnimating = false;
+  final String id;
+  Vector position;
+  Vector velocity;
+  bool isRemoved = false; // Block is logically removed
+  bool isAnimating = false; // Block is playing animation
   
   AnimatedNumberBlock({
     required this.number,
     required this.isCorrect,
-    required this.x,
-    required this.y,
-    required this.velocityX,
-    required this.velocityY,
-  });
+    required double x,
+    required double y,
+    required double velocityX,
+    required double velocityY,
+  }) : position = Vector(x, y),
+       velocity = Vector(velocityX, velocityY),
+       id = '${number}_${DateTime.now().millisecondsSinceEpoch}_${x.toStringAsFixed(1)}';
+  
+  // Convenience getters for backward compatibility
+  double get x => position.x;
+  double get y => position.y;
+  double get velocityX => velocity.x;
+  double get velocityY => velocity.y;
 }

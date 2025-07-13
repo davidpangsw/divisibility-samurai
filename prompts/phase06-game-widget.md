@@ -18,5 +18,6 @@
 - The number blocks still have the hovering animation as before. If such hovering occurs:
     - The movement stopped immediately.
     - When the hovering animation is done, the block is considered removed.
+    - Note to add keys into the Positioned, such that it won't get re-rendered and resets the anime.
 
 - Make sure your solution is minimal.

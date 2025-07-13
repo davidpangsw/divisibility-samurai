@@ -15,7 +15,6 @@ abstract class NumberBlockAnimation extends StatefulWidget {
 abstract class NumberBlockAnimationState<T extends NumberBlockAnimation> extends State<T> with TickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _fadeOutAnimation;
-  bool _hasAnimated = false;
 
   @override
   void initState() {
@@ -24,6 +23,13 @@ abstract class NumberBlockAnimationState<T extends NumberBlockAnimation> extends
       duration: Duration(milliseconds: Config.numberBlockAnimationDurationMs),
       vsync: this,
     );
+    
+    // Add listener to call callback when animation starts
+    _controller.addStatusListener((status) {
+      if (status == AnimationStatus.forward) {
+        widget.onAnimationTriggered?.call();
+      }
+    });
     
     _fadeOutAnimation = Tween<double>(
       begin: 1.0,
@@ -41,10 +47,9 @@ abstract class NumberBlockAnimationState<T extends NumberBlockAnimation> extends
   }
 
   void _triggerAnimation() {
-    if (!_hasAnimated) {
-      _hasAnimated = true;
+    // Only trigger if animation hasn't started yet
+    if (_controller.status == AnimationStatus.dismissed) {
       _controller.forward();
-      widget.onAnimationTriggered?.call();
     }
   }
 
