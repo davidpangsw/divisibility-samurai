@@ -61,26 +61,14 @@ abstract class NumberBlockAnimationState<T extends NumberBlockAnimation> extends
 
   @override
   Widget build(BuildContext context) {
-    return MouseRegion(
-      cursor: SystemMouseCursors.click,
-      onEnter: (_) => _triggerAnimation(), // Desktop: hover to slash
-      child: Listener(
-        onPointerMove: (_) => _triggerAnimation(), // Mobile: finger moves over
-        child: GestureDetector(
-          onTap: _triggerAnimation, // Mobile: tap to slash
-          onPanDown: (_) => _triggerAnimation(), // Mobile: finger touches down
-          behavior: HitTestBehavior.opaque, // Ensure we capture all touches
-          child: AnimatedBuilder(
-            animation: _controller,
-            builder: (context, child) {
-              return Opacity(
-                opacity: _fadeOutAnimation.value,
-                child: buildAnimatedChild(),
-              );
-            },
-          ),
-        ),
-      ),
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        return Opacity(
+          opacity: _fadeOutAnimation.value,
+          child: buildAnimatedChild(),
+        );
+      },
     );
   }
 

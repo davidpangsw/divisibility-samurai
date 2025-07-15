@@ -1,4 +1,6 @@
+import 'package:flutter/material.dart';
 import '../../utils/vector.dart';
+import '../../configs/config.dart';
 
 class AnimatedNumberBlock {
   final int number;
@@ -8,7 +10,6 @@ class AnimatedNumberBlock {
   Vector velocity;
   bool isRemoved = false; // Block is logically removed
   bool isAnimating = false; // Block is playing animation
-  bool hasBeenCounted = false; // Track if block has been counted for disappearing
   
   AnimatedNumberBlock({
     required this.number,
@@ -26,4 +27,12 @@ class AnimatedNumberBlock {
   double get y => position.y;
   double get velocityX => velocity.x;
   double get velocityY => velocity.y;
+
+  // Check if the block contains the given offset
+  bool isContain(Offset offset) {
+    return offset.dx >= position.x &&
+           offset.dx <= position.x + Config.numberBlockWidth &&
+           offset.dy >= position.y &&
+           offset.dy <= position.y + Config.numberBlockHeight;
+  }
 }

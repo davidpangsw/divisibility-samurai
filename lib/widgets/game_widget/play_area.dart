@@ -4,11 +4,11 @@ import 'dart:math';
 import '../../configs/config.dart';
 import '../../configs/game_level.dart';
 import '../../view_models/game_view_model.dart';
-import '../number_blocks/number_block.dart';
 import '../number_blocks/animated_number_block_model.dart';
 import '../../utils/physics_engine.dart';
 import '../../utils/rectangle.dart';
 import 'block_factory.dart';
+import 'block_area.dart';
 
 class PlayArea extends StatefulWidget {
   const PlayArea({super.key});
@@ -92,9 +92,8 @@ class _PlayAreaState extends State<PlayArea> with TickerProviderStateMixin {
           // Check if block fell off screen
           if (block.position.y > _playAreaRectangle.height) {
             block.isRemoved = true;
-            // Notify game view model only if a CORRECT block disappeared (only once per block)
-            if (!block.hasBeenCounted && block.isCorrect) {
-              block.hasBeenCounted = true;
+            // Notify game view model only if a CORRECT block disappeared
+            if (block.isCorrect) {
               final gameViewModel = Provider.of<GameViewModel>(context, listen: false);
               gameViewModel.onCorrectBlockDisappeared();
             }
@@ -134,9 +133,9 @@ class _PlayAreaState extends State<PlayArea> with TickerProviderStateMixin {
     // Only process if game is active
     if (!gameViewModel.isGameActive) return;
     
+    // Mark block as removed and animating
     block.isRemoved = true;
     block.isAnimating = true;
-    block.hasBeenCounted = true; // Mark as counted to prevent double-counting
     
     // Notify game view model about the slash
     gameViewModel.onBlockSlashed(block.isCorrect, block.number);
@@ -156,6 +155,10 @@ class _PlayAreaState extends State<PlayArea> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    final gameViewModel = Provider.of<GameViewModel>(context, listen: false);
+    final currentLevel = gameViewModel.gameState.level;
+    final gameLevel = GameLevel.getLevel(currentLevel);
+    
     return Container(
       width: _playAreaRectangle.width,
       height: _playAreaRectangle.height,
@@ -163,20 +166,14 @@ class _PlayAreaState extends State<PlayArea> with TickerProviderStateMixin {
         border: Border.all(color: Colors.grey),
         color: Colors.grey[100],
       ),
-      child: Stack(
-        children: _blocks.map((block) {
-          return Positioned(
-            key: ValueKey(block.id), // Preserve widget identity during rebuilds
-            left: block.x,
-            top: block.y,
-            child: NumberBlock(
-              key: ValueKey('${block.id}_block'), // Preserve NumberBlock identity
-              number: block.number,
-              isCorrect: block.isCorrect,
-              onSlashed: () => _handleBlockSlashed(block),
-            ),
-          );
-        }).toList(),
+      child: BlockArea(
+        areaRectangle: _playAreaRectangle,
+        blockRectangle: _blockRectangle,
+        blocks: _blocks,
+        applyPhysics: false, // Physics handled by _updatePhysics
+        physicsEngine: _physicsEngine,
+        gravity: gameLevel.gravity,
+        onBlockSlashed: _handleBlockSlashed,
       ),
     );
   }
