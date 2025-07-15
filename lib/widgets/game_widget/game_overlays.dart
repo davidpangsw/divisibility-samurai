@@ -42,18 +42,18 @@ class StartGameOverlay extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
               child: Image.asset(
                 AssetManager.samuraiImagePath,
-                width: 150,
-                height: 100,
+                width: 200,
+                height: 150,
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) {
                   return Container(
-                    width: 150,
-                    height: 100,
+                    width: 200,
+                    height: 150,
                     decoration: BoxDecoration(
                       color: Colors.grey[300],
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: const Icon(Icons.image_not_supported, size: 40, color: Colors.grey),
+                    child: const Icon(Icons.image_not_supported, size: 50, color: Colors.grey),
                   );
                 },
               ),

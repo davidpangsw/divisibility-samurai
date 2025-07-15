@@ -35,6 +35,12 @@ class AssetPaths {
     'sounds/music/silver-bgm': ['battle-fight-music-dynamic-warrior-background-intro-theme-272176.mp3'],
     'sounds/music/gold-bgm': ['battle-background-music-309756.mp3'],
     'sounds/music/campfire-bgm': ['campfire-crackling-fireplace-sound-119594.mp3'],
-    'images/samurai': ['openart-image_oOwjbEGr_1752429681294_raw.jpg'],
+    'images/samurai': [
+      'openart-image_oOwjbEGr_1752429681294_raw.jpg',
+      '9x16_Create_a_5_second_2D_cartoon_ani_00.png',
+      '9x16_Create_a_5_second_2D_cartoon_ani_01.png',
+      '9x16_Create_a_5_second_2D_cartoon_ani_02.png',
+      '9x16_Create_a_5_second_2D_cartoon_ani_03.png',
+    ],
   };
 }

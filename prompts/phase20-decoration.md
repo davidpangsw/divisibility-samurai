@@ -28,3 +28,7 @@
         - Make sure it works on both local and web browser. The `assets/assets/` bug is always annoying.
 
 -  Can you read through the whole lib/ and see any things you can improve? Aim for refactoring and reducing code
+
+- Samurai picture
+    - I added several picture. Include them into assets.
+    - Also, make the samurai picture widget bigger (because I added some larger assets)

@@ -57,11 +57,13 @@ This is a Flutter math game called "Divisibility Samurai" where players identify
 - **Vector**: 2D physics calculations for position/velocity/acceleration
 - **Line**: Slashing animation paths with `randomSlashing()` and `evaluate(t)`
 - **SoundManager**: Audio system management with web browser integration
+- **AssetManager**: Centralized asset path management for Flutter web compatibility
 
-### Configuration (lib/configs/config.dart)
-- Tier-based game parameters (gravity, number ranges, physics constants)
-- Audio asset paths organized by categories (BGM tiers, SFX)
-- All configurable game mechanics (lives, block limits, scoring)
+### Configuration (lib/configs/)
+- **config.dart**: Tier-based game parameters (gravity, number ranges, physics constants)
+- **asset_paths.dart**: Centralized asset path configuration with folder-to-file mappings
+- **tier.dart**: Tier enum with embedded name and emoji properties
+- **game_level.dart**: Level progression and tier management
 
 ## Game Mechanics
 
@@ -101,6 +103,58 @@ This is a Flutter math game called "Divisibility Samurai" where players identify
 - **Custom Painters**: Line drawing for slash effects
 - **Smooth Transitions**: Tier progression with appropriate visual feedback
 
+## Asset Management System
+
+### Critical Asset Path Handling
+The AssetManager class in `lib/utils/asset_manager.dart` is the ONLY place that should handle asset path construction. This system was created to solve Flutter web's inconsistent asset loading between local development and production builds.
+
+**⚠️ WARNING: DO NOT MODIFY AssetManager.getRandomAsset() WITHOUT EXTREME CARE**
+
+The current implementation works for both:
+- Local development (`flutter run`)
+- Firebase web deployment (`firebase deploy`)
+
+### How It Works
+1. **AssetPaths Configuration** (`lib/configs/asset_paths.dart`):
+   - Maps folder paths to file lists: `'images/samurai' -> ['file1.png', 'file2.png']`
+   - Centralizes all asset declarations in one place
+   - Must be updated when adding new asset files
+
+2. **AssetManager Methods** (`lib/utils/asset_manager.dart`):
+   - `getRandomAsset(folderPath)`: Returns `'assets/folderPath/randomFile'` with assets/ prefix
+   - All image and sound methods use this single method for consistency
+   - **ALWAYS** includes `assets/` prefix to match Flutter web's AssetManifest.json
+
+3. **Usage Pattern**:
+   ```dart
+   // Background images
+   AssetManager.getBackgroundImagePath(Tier.study) 
+   // Returns: 'assets/images/study-background/japanese-garden-4313104_1280.jpg'
+   
+   // Samurai images (now includes 5 images for variety)
+   AssetManager.samuraiImagePath
+   // Returns: 'assets/images/samurai/[random_samurai_image]'
+   ```
+
+### Asset File Organization
+```
+assets/
+├── images/
+│   ├── study-background/      # Study tier backgrounds
+│   ├── bronze-background/     # Bronze tier backgrounds  
+│   ├── silver-background/     # Silver tier backgrounds
+│   ├── gold-background/       # Gold tier backgrounds
+│   └── samurai/              # Samurai character images (5 total)
+└── sounds/
+    ├── effects/slash/        # Slash sound effects
+    └── music/               # Tier-based background music
+```
+
+### Samurai Images Enhancement
+- Added 4 new PNG images: `9x16_Create_a_5_second_2D_cartoon_ani_00-03.png`
+- AssetManager randomly selects from all 5 samurai images for variety
+- All samurai images properly configured in AssetPaths.assetMap
+
 ## Development Guidelines
 
 - **Fixed PlayArea**: Maintain 360x480 dimensions for cross-platform consistency
@@ -108,6 +162,7 @@ This is a Flutter math game called "Divisibility Samurai" where players identify
 - **Settings Persistence**: Use localStorage for web, ensure graceful fallbacks
 - **Asset Organization**: Follow tier-based structure for audio/visual assets
 - **Performance**: Maintain 60 FPS with efficient physics calculations
+- **Asset Management**: NEVER bypass AssetManager - always use its methods for asset paths
 
 ## Deployment
 

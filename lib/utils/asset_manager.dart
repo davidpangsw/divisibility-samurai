@@ -4,11 +4,33 @@ import '../configs/tier.dart';
 
 /// Centralized asset management to handle Flutter's inconsistent asset loading
 /// between local development and web builds, and avoid the assets/assets/ bug
+///
+/// ⚠️ CRITICAL WARNING: DO NOT MODIFY getRandomAsset() WITHOUT EXTREME CARE
+/// 
+/// This class solves the Flutter web asset path problem that caused multiple failures:
+/// - Local development and Firebase deploy have different asset path requirements
+/// - The current implementation with 'assets/' prefix works for BOTH platforms
+/// - Changing the asset path logic has repeatedly broken the app
+/// 
+/// TESTED AND WORKING FOR:
+/// - flutter run (local development)
+/// - firebase deploy (web production)
+/// 
+/// If you modify this class, you MUST test both local AND Firebase deploy!
 class AssetManager {
   
   /// Get a random asset from a folder path
   /// 
-  /// Example: getRandomAsset('images/study-background') returns a random file from that folder
+  /// ⚠️ CRITICAL: This method MUST return paths with 'assets/' prefix!
+  /// 
+  /// Example: getRandomAsset('images/study-background') 
+  /// Returns: 'assets/images/study-background/japanese-garden-4313104_1280.jpg'
+  /// 
+  /// This matches Flutter web's AssetManifest.json expectations and works for both:
+  /// - Local development (flutter run)
+  /// - Firebase web deploy (firebase deploy)
+  /// 
+  /// DO NOT REMOVE THE 'assets/' PREFIX - it will break image loading!
   static String getRandomAsset(String folderPath) {
     final files = AssetPaths.assetMap[folderPath];
     if (files == null || files.isEmpty) {
@@ -17,29 +39,13 @@ class AssetManager {
     
     final random = Random();
     final selectedFile = files[random.nextInt(files.length)];
-    return 'assets/$folderPath/$selectedFile';
-  }
-  
-  /// Get a random asset path for Image.asset() widget
-  /// 
-  /// Handles different path requirements for web vs local development
-  static String getRandomImageAsset(String folderPath) {
-    final files = AssetPaths.assetMap[folderPath];
-    if (files == null || files.isEmpty) {
-      throw ArgumentError('No files found for folder: $folderPath');
-    }
-    
-    final random = Random();
-    final selectedFile = files[random.nextInt(files.length)];
-    
-    // For web builds, Image.asset() needs the assets/ prefix
-    // For local development, it works both ways but assets/ prefix is safer
+    // CRITICAL: Always include 'assets/' prefix for Flutter web compatibility
     return 'assets/$folderPath/$selectedFile';
   }
   
   /// Get a random background image path for the given tier
   static String getBackgroundImagePath(Tier tier) {
-    return getRandomImageAsset(AssetPaths.tierBackgrounds[tier]!);
+    return getRandomAsset(AssetPaths.tierBackgrounds[tier]!);
   }
   
   /// Get a random sound path for slash effects
@@ -59,6 +65,6 @@ class AssetManager {
   
   /// Get the samurai image path
   static String get samuraiImagePath {
-    return getRandomImageAsset(AssetPaths.samuraiImages);
+    return getRandomAsset(AssetPaths.samuraiImages);
   }
 }
