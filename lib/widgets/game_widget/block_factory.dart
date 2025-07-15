@@ -1,5 +1,6 @@
 import 'dart:math';
 import '../../configs/config.dart';
+import '../../configs/game_level.dart';
 import '../number_blocks/animated_number_block_model.dart';
 
 class BlockFactory {
@@ -9,8 +10,9 @@ class BlockFactory {
     // First, decide if this block should be correct (divisible) or not
     final shouldBeCorrect = _random.nextDouble() < Config.correctBlockProbability;
     
-    final minNumber = Config.getMinNumberForLevel(level);
-    final maxNumber = Config.getMaxNumberForLevel(level);
+    final gameLevel = GameLevel.getLevel(level);
+    final minNumber = gameLevel.minNumber;
+    final maxNumber = gameLevel.maxNumber;
     
     int number;
     if (shouldBeCorrect) {
@@ -27,7 +29,7 @@ class BlockFactory {
       x: _random.nextDouble() * (Config.playAreaWidth - Config.numberBlockWidth),
       y: Config.playAreaHeight - Config.numberBlockHeight,
       velocityX: Config.minHorizontalVelocity + _random.nextDouble() * (Config.maxHorizontalVelocity - Config.minHorizontalVelocity),
-      velocityY: Config.getMinVerticalVelocityForLevel(level) + _random.nextDouble() * (Config.getMaxVerticalVelocityForLevel(level) - Config.getMinVerticalVelocityForLevel(level)),
+      velocityY: gameLevel.minVerticalVelocity + _random.nextDouble() * (gameLevel.maxVerticalVelocity - gameLevel.minVerticalVelocity),
     );
   }
 

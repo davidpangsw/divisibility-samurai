@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'dart:math';
 import '../../configs/config.dart';
+import '../../configs/game_level.dart';
 import '../../view_models/game_view_model.dart';
 import '../number_blocks/number_block.dart';
 import '../number_blocks/animated_number_block_model.dart';
-import 'physics_engine.dart';
+import '../../utils/physics_engine.dart';
+import '../../utils/rectangle.dart';
 import 'block_factory.dart';
 
 class PlayArea extends StatefulWidget {
@@ -17,13 +19,23 @@ class PlayArea extends StatefulWidget {
 
 class _PlayAreaState extends State<PlayArea> with TickerProviderStateMixin {
   late AnimationController _animationController;
+  late PhysicsEngine _physicsEngine;
   final List<AnimatedNumberBlock> _blocks = [];
   int _frameCounter = 0;
   static final int _blockGenerationInterval = (Config.blockGenerationInterval.inMilliseconds / (1000 / 60)).round();
+  static const Rectangle _playAreaRectangle = Rectangle(Config.playAreaWidth, Config.playAreaHeight);
+  static const Rectangle _blockRectangle = Rectangle(Config.numberBlockWidth, Config.numberBlockHeight);
 
   @override
   void initState() {
     super.initState();
+    
+    _physicsEngine = PhysicsEngine(
+      playAreaRectangle: _playAreaRectangle,
+      blockRectangle: _blockRectangle,
+      bounceDamping: Config.bounceDamping,
+    );
+    
     _animationController = AnimationController(
       duration: const Duration(seconds: 60),
       vsync: this,
@@ -48,7 +60,8 @@ class _PlayAreaState extends State<PlayArea> with TickerProviderStateMixin {
     // Simple random generation up to max limit
     if (_blocks.length < Config.maxNumberBlocksInPlayArea && 
         Random().nextDouble() < Config.blockGenerationChance) {
-      final block = BlockFactory.createBlock(gameViewModel.gameState.divisor, gameViewModel.gameState.level);
+      final gameLevel = GameLevel.getLevel(gameViewModel.gameState.level);
+      final block = BlockFactory.createBlock(gameLevel.divisor, gameViewModel.gameState.level);
       
       setState(() {
         _blocks.add(block);
@@ -59,23 +72,25 @@ class _PlayAreaState extends State<PlayArea> with TickerProviderStateMixin {
   void _updatePhysics() {
     final gameViewModel = Provider.of<GameViewModel>(context, listen: false);
     final currentLevel = gameViewModel.gameState.level;
-    final gravity = Config.getGravityForLevel(currentLevel);
+    final gameLevel = GameLevel.getLevel(currentLevel);
+    const double deltaTime = 1.0 / 60.0;
     
     setState(() {
       // Update physics for each block and mark for removal if needed
       for (final block in _blocks) {
         if (!block.isRemoved) {
           // Update physics only for non-removed blocks
-          final (newPosition, newVelocity) = PhysicsEngine.updateSingleBlock(
+          final (newPosition, newVelocity) = _physicsEngine.updateSingleBlock(
             block.position, 
             block.velocity,
-            gravity
+            gameLevel.gravity,
+            deltaTime
           );
           block.position = newPosition;
           block.velocity = newVelocity;
           
           // Check if block fell off screen
-          if (PhysicsEngine.shouldRemoveBlock(block.position)) {
+          if (block.position.y > _playAreaRectangle.height) {
             block.isRemoved = true;
             // Notify game view model only if a CORRECT block disappeared (only once per block)
             if (!block.hasBeenCounted && block.isCorrect) {
@@ -142,8 +157,8 @@ class _PlayAreaState extends State<PlayArea> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: Config.playAreaWidth,
-      height: Config.playAreaHeight,
+      width: _playAreaRectangle.width,
+      height: _playAreaRectangle.height,
       decoration: BoxDecoration(
         border: Border.all(color: Colors.grey),
         color: Colors.grey[100],

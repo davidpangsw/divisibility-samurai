@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../view_models/game_view_model.dart';
 import '../../configs/config.dart';
+import '../../configs/game_level.dart';
 import '../../utils/sound_manager.dart';
 import '../game_result_dialog.dart';
 import '../number_blocks/basic_number_block.dart';
@@ -199,7 +200,7 @@ class _GameWidgetState extends State<GameWidget> {
   }
 
   Widget _buildNextLevelInfo(GameViewModel gameViewModel) {
-    if (gameViewModel.gameState.level >= Config.totalLevels) {
+    if (gameViewModel.gameState.level >= GameLevel.totalLevels) {
       return const Text(
         '🎉 Game Complete!',
         style: TextStyle(color: Colors.amber, fontSize: 18, fontWeight: FontWeight.bold),
@@ -211,8 +212,9 @@ class _GameWidgetState extends State<GameWidget> {
     final comingLevel = gameViewModel.status == GameStatus.firstLevelTransition 
         ? gameViewModel.gameState.level 
         : gameViewModel.gameState.level + 1;
-    final comingTier = Config.getLevelTier(comingLevel);
-    final comingDivisor = Config.getDivisorForLevel(comingLevel);
+    final comingGameLevel = GameLevel.getLevel(comingLevel);
+    final comingTier = comingGameLevel.tier.name;
+    final comingDivisor = comingGameLevel.divisor;
     final willRefillLives = false; // Will be determined based on tier changes
     
     String tierIcon;
@@ -391,9 +393,9 @@ class _GameWidgetState extends State<GameWidget> {
   }
 
   Widget _buildCampfireRestInfo(GameViewModel gameViewModel) {
-    final currentTier = Config.getLevelTier(gameViewModel.gameState.level);
+    final currentTier = GameLevel.getLevel(gameViewModel.gameState.level).tier.name;
     final nextLevel = gameViewModel.gameState.level + 1;
-    final nextTier = Config.getLevelTier(nextLevel);
+    final nextTier = GameLevel.getLevel(nextLevel).tier.name;
     
     String nextTierEmoji;
     switch (nextTier) {
@@ -460,7 +462,7 @@ class _GameWidgetState extends State<GameWidget> {
 
   Widget _buildCampfireButtonText(GameViewModel gameViewModel) {
     final nextLevel = gameViewModel.gameState.level + 1;
-    final nextTier = Config.getLevelTier(nextLevel);
+    final nextTier = GameLevel.getLevel(nextLevel).tier.name;
     
     final campfireTexts = {
       'Bronze': 'Venture Forth, Brave Soul! 🗡️',

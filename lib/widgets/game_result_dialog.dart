@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/rendering.dart';
 import 'dart:ui' as ui;
 import 'package:flutter/foundation.dart';
-import '../configs/config.dart';
+import '../configs/game_level.dart';
 
 // Import for web download functionality
 import 'dart:html' as html;
@@ -149,7 +149,8 @@ class _GameResultDialogState extends State<GameResultDialog> {
 
   Widget _buildStatsSection() {
     String tierEmoji = '';
-    String tier = Config.getLevelTier(widget.finalLevel);
+    final gameLevel = GameLevel.getLevel(widget.finalLevel);
+    String tier = gameLevel.tier.name;
     if (tier == 'Study') {
       tierEmoji = '📚';
     } else if (tier == 'Bronze') {
@@ -167,7 +168,7 @@ class _GameResultDialogState extends State<GameResultDialog> {
         const SizedBox(height: 8),
         Text('Total blocks missed: ${widget.totalBlocksMissed}', style: const TextStyle(fontSize: 16)),
         const SizedBox(height: 8),
-        Text('Last level: $tierEmoji${Config.getDivisorForLevel(widget.finalLevel)}', style: const TextStyle(fontSize: 16)),
+        Text('Last level: $tierEmoji${gameLevel.divisor}', style: const TextStyle(fontSize: 16)),
       ],
     );
   }

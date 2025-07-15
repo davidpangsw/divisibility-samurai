@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../configs/config.dart';
+import '../../configs/game_level.dart';
 
 class StatsBar extends StatelessWidget {
   final int score;
@@ -19,25 +20,12 @@ class StatsBar extends StatelessWidget {
     required this.remainingCorrectNeeded,
   });
   
-  String _getTierIcon(String tier) {
-    switch (tier) {
-      case 'Study':
-        return '📚';
-      case 'Bronze':
-        return '🥉';
-      case 'Silver':
-        return '🥈';
-      case 'Gold':
-        return '🥇';
-      default:
-        return '';
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
-    final tier = Config.getLevelTier(level);
-    final tierIcon = _getTierIcon(tier);
+    final gameLevel = GameLevel.getLevel(level);
+    final tier = gameLevel.tier.name;
+    final tierIcon = gameLevel.tier.emoji;
     
     return Container(
       width: Config.playAreaWidth,

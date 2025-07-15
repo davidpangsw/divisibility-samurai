@@ -1,4 +1,4 @@
-## Phase 18: Revamp PlayArea
+## Phase 18: Reduce complex code
 - Create a class Rectangle (under utils) that represents a rectangle of given width and height
     - Make your usage in config file.
 
@@ -29,13 +29,3 @@
         - Order, number of levels, ... is determined by the index and size of list.
     - Config has some useless methods like getLevel tier, get level divisor... these are useless now. Delete them all. Either make use of GameLevel properly, or add some static helper in GameLevel
 
-- PlayArea
-    - The code is so confusing, can you simplify it? Or add comments to explain how these boolean flags work, as they are very confusing
-    - what does "hasBeenCounted" mean? this is a useless flag (duplicated with isRemoved)
-    - You used a lot of config class in play area. this is no good.
-    - for example, it may store the fixed config play area rectangle as a field.
-    - game state should store the level, which contains the gravity, avoid calling get gravity for level.
-    - In mobile (using a browser), a player is also allowed to "slash" a block when the pointer is pressed and hover through a block. This is tricky because the block may not detect this event. (It is pressed in play area, and then hover the block). To make sure the animation is consistent with what happen in browser hovering:
-        - Do not use mouse region hovering (remove the wrapper). Instead, detect all events in the play area. When the mouse or pointer (pressed or not) moves to a block, "slash" the block. This guarantee the results are identical.
-        - In help dialogue, you may need to wrap the example with mouse region.
-        - Fix your bugs introduced after your edit..
