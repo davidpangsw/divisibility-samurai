@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../utils/asset_manager.dart';
 import 'game_rule_section.dart';
 import 'example_section.dart';
 import 'hint_card_section.dart';
@@ -21,7 +22,7 @@ class HelpDialog extends StatelessWidget {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(12),
                 child: Image.asset(
-                  'assets/images/samurai/openart-image_oOwjbEGr_1752429681294_raw.jpg',
+                  AssetManager.samuraiImagePath,
                   width: 200,
                   height: 150,
                   fit: BoxFit.cover,

@@ -18,31 +18,12 @@ class Config {
   static const Duration numberBlockAnimationDuration = Duration(milliseconds: 400);
   static const Duration blockCleanupDelay = numberBlockAnimationDuration;
   
-  // Sound files - hardcoded but organized
-  static const List<String> slashSoundPaths = [
-    'sounds/effects/slash/sword-sound-2-36274.mp3',
-  ];
+  // Physics constants
+  static const double targetFps = 60.0;
+  static const double deltaTime = 1.0 / targetFps;
   
-  static const List<String> studyBgmPaths = [
-    'sounds/music/study-bgm/sedative-110241.mp3',
-    'sounds/music/study-bgm/jazz-lounge-elevator-music-332339.mp3',
-  ];
-  
-  static const List<String> bronzeBgmPaths = [
-    'sounds/music/bronze-bgm/adventure-cinematic-music-faith-journey-324896.mp3',
-  ];
-  
-  static const List<String> silverBgmPaths = [
-    'sounds/music/silver-bgm/battle-fight-music-dynamic-warrior-background-intro-theme-272176.mp3',
-  ];
-  
-  static const List<String> goldBgmPaths = [
-    'sounds/music/gold-bgm/battle-background-music-309756.mp3',
-  ];
-  
-  static const List<String> campfireBgmPaths = [
-    'sounds/music/campfire-bgm/campfire-crackling-fireplace-sound-119594.mp3',
-  ];
+  // Audio constants
+  static const double initialAudioLoadRatio = 0.5;
   
   // Game lifecycle
   static const Duration levelTransitionDelay = Duration(seconds: 2);

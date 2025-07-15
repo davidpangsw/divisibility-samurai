@@ -73,7 +73,7 @@ class _PlayAreaState extends State<PlayArea> with TickerProviderStateMixin {
     final gameViewModel = Provider.of<GameViewModel>(context, listen: false);
     final currentLevel = gameViewModel.gameState.level;
     final gameLevel = GameLevel.getLevel(currentLevel);
-    const double deltaTime = 1.0 / 60.0;
+    const double deltaTime = Config.deltaTime;
     
     setState(() {
       // Update physics for each block and mark for removal if needed
@@ -159,13 +159,9 @@ class _PlayAreaState extends State<PlayArea> with TickerProviderStateMixin {
     final currentLevel = gameViewModel.gameState.level;
     final gameLevel = GameLevel.getLevel(currentLevel);
     
-    return Container(
+    return SizedBox(
       width: _playAreaRectangle.width,
       height: _playAreaRectangle.height,
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey),
-        color: Colors.grey[100],
-      ),
       child: BlockArea(
         areaRectangle: _playAreaRectangle,
         blockRectangle: _blockRectangle,

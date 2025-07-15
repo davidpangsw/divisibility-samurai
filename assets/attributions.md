@@ -1,3 +1,20 @@
+# images
+
+- Study Background
+    - Image by <a href="https://pixabay.com/users/sofielafee-10521331/?utm_source=link-attribution&utm_medium=referral&utm_campaign=image&utm_content=4313104">Sofielafee</a> from <a href="https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=image&utm_content=4313104">Pixabay</a>
+
+- Bronze Background
+    - Image by <a href="https://pixabay.com/users/chiemseherin-1425977/?utm_source=link-attribution&utm_medium=referral&utm_campaign=image&utm_content=8892397">🌼Christel🌼</a> from <a href="https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=image&utm_content=8892397">Pixabay</a>
+
+- Silver Background
+    - Image by <a href="https://pixabay.com/users/张国纯-20854249/?utm_source=link-attribution&utm_medium=referral&utm_campaign=image&utm_content=6122667">Zhang Guochun</a> from <a href="https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=image&utm_content=6122667">Pixabay</a>
+
+- Gold Background
+    - Image by <a href="https://pixabay.com/users/darkmoon_art-1664300/?utm_source=link-attribution&utm_medium=referral&utm_campaign=image&utm_content=5077455">Dorothe</a> from <a href="https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=image&utm_content=5077455">Pixabay</a>
+
+
+
+# sounds
 - Campfire (AS BGM)
     - Sound Effect by <a href="https://pixabay.com/users/soundsforyou-4861230/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=119594">Mikhail</a> from <a href="https://pixabay.com/sound-effects//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=119594">Pixabay</a>
 - Slash

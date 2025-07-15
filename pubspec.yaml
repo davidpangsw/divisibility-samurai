@@ -73,6 +73,10 @@ flutter:
     - assets/sounds/music/study-bgm/
     - assets/images/
     - assets/images/samurai/
+    - assets/images/study-background/
+    - assets/images/bronze-background/
+    - assets/images/silver-background/
+    - assets/images/gold-background/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

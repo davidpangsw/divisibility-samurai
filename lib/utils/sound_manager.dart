@@ -1,7 +1,8 @@
 import 'package:universal_html/html.dart' as html;
 import 'package:flutter/services.dart';
 import 'dart:math';
-import '../configs/config.dart';
+import '../configs/tier.dart';
+import 'asset_manager.dart';
 
 class SoundManager {
   static bool _soundEnabled = true;
@@ -22,12 +23,14 @@ class SoundManager {
       _loadVolumeSettings();
       
       // Initialize only the first few slash sounds for faster loading
-      final slashSoundPaths = Config.slashSoundPaths;
-      final initialLoadCount = (slashSoundPaths.length * 0.5).round(); // Load 50% initially
+      // Load slash sound using AssetManager
+      final soundPath = AssetManager.getRandomSlashSound();
+      final slashSoundPaths = [soundPath]; // Single sound for now
+      final initialLoadCount = 1;
       
       for (int i = 0; i < initialLoadCount && i < slashSoundPaths.length; i++) {
-        final soundPath = slashSoundPaths[i];
-        final audioUrl = await _getAssetUrl('assets/$soundPath');
+        final currentPath = slashSoundPaths[i];
+        final audioUrl = await _getAssetUrl(currentPath);
         if (audioUrl != null) {
           final audio = html.AudioElement(audioUrl);
           audio.preload = 'auto';
@@ -177,56 +180,46 @@ class SoundManager {
         _currentBgm = null;
       }
       
-      // Get music list for tier
-      List<String> musicPaths;
-      switch (tier.toLowerCase()) {
-        case 'study':
-          musicPaths = Config.studyBgmPaths;
-          break;
-        case 'bronze':
-          musicPaths = Config.bronzeBgmPaths;
-          break;
-        case 'silver':
-          musicPaths = Config.silverBgmPaths;
-          break;
-        case 'gold':
-          musicPaths = Config.goldBgmPaths;
-          break;
-        case 'campfire':
-          musicPaths = Config.campfireBgmPaths;
-          break;
-        default:
-          _currentBgmTier = null;
-          return;
+      // Get music path using AssetManager
+      String selectedPath;
+      if (tier.toLowerCase() == 'campfire') {
+        selectedPath = AssetManager.getCampfireBgmPath();
+      } else {
+        // Convert string to Tier enum
+        late Tier tierEnum;
+        switch (tier.toLowerCase()) {
+          case 'study': tierEnum = Tier.study; break;
+          case 'bronze': tierEnum = Tier.bronze; break;
+          case 'silver': tierEnum = Tier.silver; break;
+          case 'gold': tierEnum = Tier.gold; break;
+          default: tierEnum = Tier.study;
+        }
+        selectedPath = AssetManager.getRandomBgmPath(tierEnum);
       }
       
-      if (musicPaths.isNotEmpty) {
-        // Randomly select a music track
-        final selectedPath = musicPaths[_random.nextInt(musicPaths.length)];
-        final audioUrl = await _getAssetUrl('assets/$selectedPath');
-        if (audioUrl != null) {
-          _currentBgm = html.AudioElement(audioUrl);
-          _currentBgm!.volume = _bgmVolume;
-          _currentBgm!.loop = true; // Loop forever
+      final audioUrl = await _getAssetUrl(selectedPath);
+      if (audioUrl != null) {
+        _currentBgm = html.AudioElement(audioUrl);
+        _currentBgm!.volume = _bgmVolume;
+        _currentBgm!.loop = true; // Loop forever
+      
+        // Add event listeners to handle audio events
+        _currentBgm!.onEnded.listen((_) {
+          // In case loop fails, restart manually
+          if (_currentBgm != null && _currentBgmTier == tier) {
+            _currentBgm!.currentTime = 0;
+            _currentBgm!.play();
+          }
+        });
         
-          // Add event listeners to handle audio events
-          _currentBgm!.onEnded.listen((_) {
-            // In case loop fails, restart manually
-            if (_currentBgm != null && _currentBgmTier == tier) {
-              _currentBgm!.currentTime = 0;
-              _currentBgm!.play();
-            }
-          });
-          
-          _currentBgm!.onError.listen((_) {
-            // Handle audio errors
-            _currentBgm = null;
-            _currentBgmTier = null;
-          });
-          
-          await _currentBgm!.play();
-          _currentBgmTier = tier; // Set current tier after successful play
-        }
+        _currentBgm!.onError.listen((_) {
+          // Handle audio errors
+          _currentBgm = null;
+          _currentBgmTier = null;
+        });
+        
+        await _currentBgm!.play();
+        _currentBgmTier = tier; // Set current tier after successful play
       }
     } catch (e) {
       // Silent fail

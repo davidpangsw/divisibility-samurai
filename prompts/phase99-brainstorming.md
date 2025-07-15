@@ -7,8 +7,9 @@
 - UI/UX
     - Tune the game to become additive
 
-- Animation / Picture
-    - Cat samurai anime after each tier done. (Use AI to generate)
+## Animation / Picture
+- Cat samurai anime after each tier done. (Use AI to generate)
+
 
 ## Deployment
 1. Our game is done. Do not edit any classes. Teach me how to deploy it into firebase. Just generate your answers and commands involved into the chat.
