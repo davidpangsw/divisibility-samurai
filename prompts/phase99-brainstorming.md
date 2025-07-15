@@ -10,6 +10,8 @@
 - Animation / Picture
     - Cat samurai anime after each tier done. (Use AI to generate)
 
+    - Playing with Mobile Browser, slash a block when finger "enters" the block. Can be a tap or swipe. Not just tap.
+        - When the pointer enters the block . No matter the pointer is pressing or not.
 
 ## Deployment
 1. Our game is done. Do not edit any classes. Teach me how to deploy it into firebase. Just generate your answers and commands involved into the chat.
