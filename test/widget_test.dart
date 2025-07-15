@@ -8,14 +8,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:math_game/main.dart';
+import 'package:divisibility_samurai/main.dart';
 
 void main() {
   testWidgets('Divisibility Samurai app loads successfully', (WidgetTester tester) async {
     await tester.pumpWidget(const MyApp());
-
+    
+    // Initially shows loading screen
     expect(find.text('Divisibility Samurai'), findsOneWidget);
-    expect(find.text('Game Area Placeholder'), findsOneWidget);
-    expect(find.byIcon(Icons.help), findsOneWidget);
+    expect(find.text('Loading game assets...'), findsOneWidget);
+    expect(find.byType(CircularProgressIndicator), findsOneWidget);
+    
+    // Wait for loading to complete and pump to show homepage
+    await tester.pumpAndSettle(const Duration(seconds: 5));
+    
+    // After loading, should show the main game interface
+    expect(find.text('Divisibility Samurai'), findsOneWidget); // App bar title
+    expect(find.text('Help'), findsOneWidget); // Help button with text
+    expect(find.text('Settings'), findsOneWidget); // Settings button with text
+    expect(find.text('About'), findsOneWidget); // About button with text
   });
 }

@@ -6,8 +6,9 @@ class HelpButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return IconButton(
+    return TextButton.icon(
       icon: const Icon(Icons.help),
+      label: const Text('Help'),
       onPressed: () {
         showDialog(
           context: context,

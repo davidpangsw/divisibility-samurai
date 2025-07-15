@@ -1,11 +1,11 @@
 {
-    "name": "math_game",
-    "short_name": "math_game",
+    "name": "Divisibility Samurai",
+    "short_name": "Div Samurai",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "Learn math through slashing numbers - identify divisible numbers in this fun physics game",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

@@ -6,8 +6,9 @@ class AboutButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return IconButton(
+    return TextButton.icon(
       icon: const Icon(Icons.info_outline),
+      label: const Text('About'),
       onPressed: () {
         showDialog(
           context: context,

@@ -206,14 +206,17 @@ class _GameWidgetState extends State<GameWidget> {
       );
     }
     
-    final nextLevel = gameViewModel.gameState.level + 1;
-    final nextTier = gameViewModel.gameState.currentLevelTier;
-    final nextLevelTier = Config.getLevelTier(nextLevel);
-    final nextDivisor = Config.getDivisorForLevel(nextLevel);
-    final willRefillLives = nextTier != nextLevelTier;
+    // For first level transition, show current level (1)
+    // For level/tier completed transitions, show next level
+    final comingLevel = gameViewModel.status == GameStatus.firstLevelTransition 
+        ? gameViewModel.gameState.level 
+        : gameViewModel.gameState.level + 1;
+    final comingTier = Config.getLevelTier(comingLevel);
+    final comingDivisor = Config.getDivisorForLevel(comingLevel);
+    final willRefillLives = false; // Will be determined based on tier changes
     
     String tierIcon;
-    switch (nextLevelTier) {
+    switch (comingTier) {
       case 'Study':
         tierIcon = '📚';
         break;
@@ -234,7 +237,7 @@ class _GameWidgetState extends State<GameWidget> {
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
-          '$tierIcon$nextDivisor',
+          '$tierIcon $comingTier',
           style: const TextStyle(
             color: Colors.yellow,
             fontSize: 18,
@@ -242,10 +245,19 @@ class _GameWidgetState extends State<GameWidget> {
           ),
         ),
         const SizedBox(height: 10),
+        const Text(
+          'Divisor:',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 5),
         SizedBox(
           width: 80,
           height: 60,
-          child: BasicNumberBlock(number: nextDivisor, color: Colors.red),
+          child: BasicNumberBlock(number: comingDivisor, color: Colors.red),
         ),
         if (willRefillLives) ...[
           const SizedBox(height: 10),
@@ -281,6 +293,9 @@ class _GameWidgetState extends State<GameWidget> {
       case GameStatus.gameWon:
         _handleGameEnd(gameViewModel, true);
         break;
+      case GameStatus.firstLevelTransition:
+        _handleFirstLevelTransition(gameViewModel);
+        break;
       case GameStatus.levelCompleted:
         _handleLevelCompleted(gameViewModel);
         break;
@@ -291,6 +306,22 @@ class _GameWidgetState extends State<GameWidget> {
         break;
     }
     gameViewModel.markStatusAsHandled();
+  }
+
+  void _handleFirstLevelTransition(GameViewModel gameViewModel) {
+    // Stop all game activity for first level transition
+    final playAreaState = _playAreaKey.currentState;
+    if (playAreaState != null) {
+      (playAreaState as dynamic).stopAllAnimationsAndClearBlocks();
+    }
+    
+    // Show transition overlay and proceed to playing state
+    _showLevelTransition(() {
+      gameViewModel.proceedFromFirstLevelTransition();
+      if (playAreaState != null) {
+        (playAreaState as dynamic).resumeGame();
+      }
+    });
   }
 
   void _handleLevelCompleted(GameViewModel gameViewModel) {

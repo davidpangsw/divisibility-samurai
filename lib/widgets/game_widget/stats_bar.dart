@@ -46,33 +46,48 @@ class StatsBar extends StatelessWidget {
         color: Colors.grey[200],
         border: Border.all(color: Colors.grey),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
+      child: Row(
         children: [
-          Text('Score: $score', style: const TextStyle(fontWeight: FontWeight.bold)),
-          const SizedBox(height: 4),
-          Text('Level: $tierIcon$divisor', style: const TextStyle(fontWeight: FontWeight.bold)),
-          const SizedBox(height: 4),
-          Text('Divisor: $divisor', style: const TextStyle(fontWeight: FontWeight.bold)),
-          const SizedBox(height: 4),
-          Row(
-            children: [
-              const Text('Lives: ', style: TextStyle(fontWeight: FontWeight.bold)),
-              Text('❤️' * lives, style: const TextStyle(fontSize: 16)),
-            ],
+          // Left column
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text('Score: $score', style: const TextStyle(fontWeight: FontWeight.bold)),
+                const SizedBox(height: 4),
+                Text('Tier: $tierIcon$tier', style: const TextStyle(fontWeight: FontWeight.bold)),
+                const SizedBox(height: 4),
+                Text('Divisor: $divisor', style: const TextStyle(fontWeight: FontWeight.bold)),
+                const SizedBox(height: 4),
+                Row(
+                  children: [
+                    const Text('Lives: ', style: TextStyle(fontWeight: FontWeight.bold)),
+                    Text('❤️' * lives, style: const TextStyle(fontSize: 16)),
+                  ],
+                ),
+              ],
+            ),
           ),
-          const SizedBox(height: 4),
-          Text(
-            'Needed: $remainingCorrectNeeded more correct',
-            style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.green),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            'Correct blocks left: $remainingCorrectBlocksAllowed',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: remainingCorrectBlocksAllowed < 10 ? Colors.red : Colors.orange,
+          // Right column
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Blocks to slash: $remainingCorrectNeeded',
+                  style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.green),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Correct Block Left: $remainingCorrectBlocksAllowed',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: remainingCorrectBlocksAllowed < 10 ? Colors.red : Colors.orange,
+                  ),
+                ),
+              ],
             ),
           ),
         ],

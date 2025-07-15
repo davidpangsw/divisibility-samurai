@@ -15,6 +15,7 @@ abstract class NumberBlockAnimation extends StatefulWidget {
 abstract class NumberBlockAnimationState<T extends NumberBlockAnimation> extends State<T> with TickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _fadeOutAnimation;
+  bool _hasBeenSlashed = false;
 
   @override
   void initState() {
@@ -47,12 +48,14 @@ abstract class NumberBlockAnimationState<T extends NumberBlockAnimation> extends
   }
 
   void _triggerAnimation() {
-    // Only trigger if animation hasn't started yet
-    if (_controller.status == AnimationStatus.dismissed) {
+    // Only trigger if animation hasn't started yet and hasn't been slashed
+    if (_controller.status == AnimationStatus.dismissed && !_hasBeenSlashed) {
+      _hasBeenSlashed = true;
       // Don't play sound here - it should only play for correct answers
       _controller.forward();
     }
   }
+
 
   Widget buildAnimatedChild();
 
@@ -61,19 +64,29 @@ abstract class NumberBlockAnimationState<T extends NumberBlockAnimation> extends
     return MouseRegion(
       cursor: SystemMouseCursors.click,
       onEnter: (_) => _triggerAnimation(), // Desktop: hover to slash
-      child: GestureDetector(
-        onTap: _triggerAnimation, // Mobile: tap to slash
-        child: AnimatedBuilder(
-          animation: _controller,
-          builder: (context, child) {
-            return Opacity(
-              opacity: _fadeOutAnimation.value,
-              child: buildAnimatedChild(),
-            );
-          },
+      child: Listener(
+        onPointerMove: (_) => _triggerAnimation(), // Mobile: finger moves over
+        child: GestureDetector(
+          onTap: _triggerAnimation, // Mobile: tap to slash
+          onPanDown: (_) => _triggerAnimation(), // Mobile: finger touches down
+          behavior: HitTestBehavior.opaque, // Ensure we capture all touches
+          child: AnimatedBuilder(
+            animation: _controller,
+            builder: (context, child) {
+              return Opacity(
+                opacity: _fadeOutAnimation.value,
+                child: buildAnimatedChild(),
+              );
+            },
+          ),
         ),
       ),
     );
+  }
+
+  // Method to be called by parent when finger enters this block area
+  void trySlash() {
+    _triggerAnimation();
   }
 
   AnimationController get controller => _controller;

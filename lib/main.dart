@@ -1,16 +1,43 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'widgets/homepage.dart';
+import 'widgets/loading_screen.dart';
 import 'utils/sound_manager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await SoundManager.initialize();
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeApp();
+  }
+
+  Future<void> _initializeApp() async {
+    try {
+      await SoundManager.initialize();
+    } catch (e) {
+      // Handle initialization error gracefully
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +48,7 @@ class MyApp extends StatelessWidget {
         textTheme: GoogleFonts.robotoTextTheme(),
         fontFamily: GoogleFonts.roboto().fontFamily,
       ),
-      home: const Homepage(),
+      home: _isLoading ? const LoadingScreen() : const Homepage(),
     );
   }
 }

@@ -6,8 +6,9 @@ class SettingsButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return IconButton(
+    return TextButton.icon(
       icon: const Icon(Icons.settings),
+      label: const Text('Settings'),
       onPressed: () {
         showDialog(
           context: context,

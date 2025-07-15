@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'game_state_view_model.dart';
 import '../utils/sound_manager.dart';
 
-enum GameStatus { notStarted, playing, paused, levelCompleted, tierCompleted, gameWon, gameLost }
+enum GameStatus { notStarted, firstLevelTransition, playing, paused, levelCompleted, tierCompleted, gameWon, gameLost }
 
 class GameViewModel extends ChangeNotifier {
   final GameStateViewModel _gameState = GameStateViewModel();
@@ -22,7 +22,7 @@ class GameViewModel extends ChangeNotifier {
   void _startGame() {
     _gameState.resetGame();
     _gameState.startGameAudio();
-    _setStatus(GameStatus.playing);
+    _setStatus(GameStatus.firstLevelTransition);
   }
 
   void _setStatus(GameStatus newStatus) {
@@ -89,6 +89,12 @@ class GameViewModel extends ChangeNotifier {
   void proceedToNextTier() {
     if (_status == GameStatus.tierCompleted) {
       _gameState.nextLevel();
+      _setStatus(GameStatus.playing);
+    }
+  }
+
+  void proceedFromFirstLevelTransition() {
+    if (_status == GameStatus.firstLevelTransition) {
       _setStatus(GameStatus.playing);
     }
   }

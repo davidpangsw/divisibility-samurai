@@ -12,10 +12,10 @@ class Homepage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Divisibility Samurai'),
-        leading: const HelpButton(),
         actions: [
-          AboutButton(),
-          SettingsButton(),
+          const HelpButton(),
+          const SettingsButton(),
+          const AboutButton(),
         ],
       ),
       body: const Center(

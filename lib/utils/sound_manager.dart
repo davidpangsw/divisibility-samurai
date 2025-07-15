@@ -21,9 +21,12 @@ class SoundManager {
       // Load persisted volume settings
       _loadVolumeSettings();
       
-      // Initialize all slash sounds from config
+      // Initialize only the first few slash sounds for faster loading
       final slashSoundPaths = Config.slashSoundPaths;
-      for (String soundPath in slashSoundPaths) {
+      final initialLoadCount = (slashSoundPaths.length * 0.5).round(); // Load 50% initially
+      
+      for (int i = 0; i < initialLoadCount && i < slashSoundPaths.length; i++) {
+        final soundPath = slashSoundPaths[i];
         final audioUrl = await _getAssetUrl('assets/$soundPath');
         if (audioUrl != null) {
           final audio = html.AudioElement(audioUrl);
@@ -32,9 +35,32 @@ class SoundManager {
           _slashAudios.add(audio);
         }
       }
+      
+      // Load remaining sounds in background
+      _loadRemainingSlashSounds(slashSoundPaths, initialLoadCount);
     } catch (e) {
       // Silent fail
     }
+  }
+  
+  /// Load remaining slash sounds in background
+  static void _loadRemainingSlashSounds(List<String> allPaths, int startIndex) {
+    Future.delayed(const Duration(milliseconds: 100), () async {
+      for (int i = startIndex; i < allPaths.length; i++) {
+        try {
+          final soundPath = allPaths[i];
+          final audioUrl = await _getAssetUrl('assets/$soundPath');
+          if (audioUrl != null) {
+            final audio = html.AudioElement(audioUrl);
+            audio.preload = 'auto';
+            audio.volume = _sfxVolume;
+            _slashAudios.add(audio);
+          }
+        } catch (e) {
+          // Silent fail for background loading
+        }
+      }
+    });
   }
   
   /// Get proper asset URL using Flutter's asset bundle
