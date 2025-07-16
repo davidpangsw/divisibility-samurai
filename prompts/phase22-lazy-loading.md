@@ -1,10 +1,11 @@
 ## Phase22: Lazy loading
 - Currently, if the network is slow, the webpage loads EXTREMELY slow. This is very bad UX. Let change the loading:
-    - Serve a spinning circle IMMEDIATELY when user access the page. No emoji! Just text.
-    - Before serving the page, load all the images, pictures and sounds first. While loading, present a spinning circle. DO NOT LOAD ANY MUSIC
-    - After all images are loaded, serve the page immediately, while simultaneously loads the music in background. In the order of study -> bronze -> silver -> gold
+    - Use NativeSplash; Serve a spinning circle
+    - Before serving the page, load flutter, all the emojis, images, pictures and sounds first. DO NOT LOAD ANY MUSIC.
+    - Make sure all the flutter, all the emojis, images, pictures and sounds are loaded, then serve the page.
+        - Make sure flutter is loaded!!!! User should never see a blank page
+        - Make sure all the emoji required are loaded!!!! User should never see a "cross square"
+        - Make sure all the images required are loaded!!!! User should never see a "cross square"
+        - Make sure all the sounds required are loaded!!!! User should have all sound effects immediately any time.
+    - After serving the page, simultaneously loads the music in background. In the order of study -> bronze -> silver -> gold
     - Music plays whenever suitable and loaded
-
-- Tell me a way to test the webpage under slow network conditions.
-
-- Flutter seems to load a lot of shits before giving a spinning circle. Is it unsolvable?
