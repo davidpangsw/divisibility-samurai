@@ -6,3 +6,4 @@ We are going for the next phase. Remember, for each file you create or edit, mak
 4. No compile error.
 5. You should never hard-code values in our projects except in config file.
 6. If attributions change, make sure you correct the webpages accordingly.
+7. Avoid unnecessary timers like setInteval / Future. Understand the problem deeply. Truly know the event required to trigger the code.

@@ -1,11 +1,60 @@
-## Phase22: Lazy loading
+## Phase22: Asset loading
 - Currently, if the network is slow, the webpage loads EXTREMELY slow. This is very bad UX. Let change the loading:
-    - Use NativeSplash; Serve a spinning circle
-    - Before serving the page, load flutter, all the emojis, images, pictures and sounds first. DO NOT LOAD ANY MUSIC.
-    - Make sure all the flutter, all the emojis, images, pictures and sounds are loaded, then serve the page.
-        - Make sure flutter is loaded!!!! User should never see a blank page
-        - Make sure all the emoji required are loaded!!!! User should never see a "cross square"
-        - Make sure all the images required are loaded!!!! User should never see a "cross square"
-        - Make sure all the sounds required are loaded!!!! User should have all sound effects immediately any time.
-    - After serving the page, simultaneously loads the music in background. In the order of study -> bronze -> silver -> gold
-    - Music plays whenever suitable and loaded
+    - AssetManager
+        - Add a static method `preloadImages() async` to preload all images
+        - Add a static method `preloadSoundEffects() async` to preload all sound effects (except music)
+        - Add a static method `preloadSoundMusics() async` to preload all music
+        - Sound manager should not handle assets preloading. but it handles sound playing or volume control.
+
+    - Use NativeSplash
+        - Serve one samurai images.
+        - Serve a spinning circle. Make sure it is cleaned after loading.
+        - Preserve until `await preloadImagesAndSounds()`
+    
+    - when initialize the app, also `preloadSoundMusics()` without await just before you remove splash. musics are loaded in the order of study -> bronze -> silver -> gold
+        - Music plays whenever suitable and loaded
+
+    
+    - SoundManager
+        - This file is too huge, and some methods should be in AssetManager.
+        - It shouldn't know there are multiple or one sound file. It is handled in AssetManager. It just require the path or file from AssetManager! (Using folder path as some kind of "id")
+        - campfire is not a tier
+        - If you want to convert string to a tier, write that logic in tier.
+
+
+- Note: Claude is really bad at writing the FlutterNativeSplash and initializeApp(). I don't know why. So I search for my answers, and provide the code here:
+```dart
+
+void main() async {
+  var binding = WidgetsFlutterBinding.ensureInitialized();
+  
+  // Preserve native splash until assets are loaded
+  FlutterNativeSplash.preserve(widgetsBinding: binding);
+  
+  runApp(const MyApp());
+}
+// ...
+  Future<void> _initializeApp() async {
+    // ...
+    try {
+        // Preload images and sound effects first
+        await AssetManager.preloadImages();
+        await AssetManager.preloadSoundEffects();
+        AssetManager.preloadSoundMusics();
+        
+        // Initialize sound manager
+        await SoundManager.initialize();
+        
+    } finally {
+        // Remove native splash now that critical assets are loaded
+        FlutterNativeSplash.remove();
+        if (mounted) {
+            setState(() {
+                _isLoading = false;
+            });
+        }
+    }
+    // ...
+  }
+// ...
+```

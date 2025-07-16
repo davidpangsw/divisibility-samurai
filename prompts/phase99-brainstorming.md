@@ -5,9 +5,7 @@
 
 ## Animation / Picture
 - Cat samurai anime after each tier done. (Use AI to generate)
-- Anime cutscene
-- add a counter that, for current divider, how many to click to go to the next round
-    - "Blocks to slash", not clear?
+    - Anime cutscene
 - 7, 11, 13, 15?
 - Formula as block?
 

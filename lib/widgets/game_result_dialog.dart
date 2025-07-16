@@ -6,7 +6,7 @@ import 'package:flutter/foundation.dart';
 import '../configs/game_level.dart';
 
 // Import for web download functionality
-import 'dart:html' as html;
+import 'package:universal_html/html.dart' as html;
 
 class GameResultDialog extends StatefulWidget {
   final bool isWin;

@@ -36,7 +36,7 @@ dependencies:
   cupertino_icons: ^1.0.8
   provider: ^6.1.2
   universal_html: ^2.2.4
-  google_fonts: ^6.1.0
+  flutter_native_splash: ^2.3.10
 
 dev_dependencies:
   flutter_test:
@@ -103,3 +103,12 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+
+
+# Native splash screen configuration
+flutter_native_splash:
+  color: "#F3F4F6"
+  image: assets/images/samurai/9x16_Create_a_5_second_2D_cartoon_ani_00.png
+  web: true
+  android: false
+  ios: false

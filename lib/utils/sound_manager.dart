@@ -1,5 +1,4 @@
 import 'package:universal_html/html.dart' as html;
-import 'package:flutter/services.dart';
 import 'dart:math';
 import '../configs/tier.dart';
 import 'asset_manager.dart';
@@ -7,7 +6,6 @@ import 'asset_manager.dart';
 class SoundManager {
   static bool _soundEnabled = true;
   static final List<html.AudioElement> _slashAudios = [];
-  static final Map<String, String> _audioUrls = {}; // Cache for asset URLs
   static final Random _random = Random();
   static html.AudioElement? _currentBgm;
   static double _bgmVolume = 0.25; // Default 25%
@@ -22,71 +20,20 @@ class SoundManager {
       // Load persisted volume settings
       _loadVolumeSettings();
       
-      // Initialize only the first few slash sounds for faster loading
-      // Load slash sound using AssetManager
+      // Initialize slash sounds using AssetManager
       final soundPath = AssetManager.getRandomSlashSound();
-      final slashSoundPaths = [soundPath]; // Single sound for now
-      final initialLoadCount = 1;
-      
-      for (int i = 0; i < initialLoadCount && i < slashSoundPaths.length; i++) {
-        final currentPath = slashSoundPaths[i];
-        final audioUrl = await _getAssetUrl(currentPath);
-        if (audioUrl != null) {
-          final audio = html.AudioElement(audioUrl);
-          audio.preload = 'auto';
-          audio.volume = _sfxVolume;
-          _slashAudios.add(audio);
-        }
+      final audioUrl = await AssetManager.getAssetUrl(soundPath);
+      if (audioUrl != null) {
+        final audio = html.AudioElement(audioUrl);
+        audio.preload = 'auto';
+        audio.volume = _sfxVolume;
+        _slashAudios.add(audio);
       }
-      
-      // Load remaining sounds in background
-      _loadRemainingSlashSounds(slashSoundPaths, initialLoadCount);
     } catch (e) {
       // Silent fail
     }
   }
   
-  /// Load remaining slash sounds in background
-  static void _loadRemainingSlashSounds(List<String> allPaths, int startIndex) {
-    Future.delayed(const Duration(milliseconds: 100), () async {
-      for (int i = startIndex; i < allPaths.length; i++) {
-        try {
-          final soundPath = allPaths[i];
-          final audioUrl = await _getAssetUrl('assets/$soundPath');
-          if (audioUrl != null) {
-            final audio = html.AudioElement(audioUrl);
-            audio.preload = 'auto';
-            audio.volume = _sfxVolume;
-            _slashAudios.add(audio);
-          }
-        } catch (e) {
-          // Silent fail for background loading
-        }
-      }
-    });
-  }
-  
-  /// Get proper asset URL using Flutter's asset bundle
-  static Future<String?> _getAssetUrl(String assetPath) async {
-    try {
-      // Check cache first
-      if (_audioUrls.containsKey(assetPath)) {
-        return _audioUrls[assetPath];
-      }
-      
-      // Load asset using Flutter's asset bundle
-      final bytes = await rootBundle.load(assetPath);
-      final blob = html.Blob([bytes.buffer.asUint8List()]);
-      final url = html.Url.createObjectUrl(blob);
-      
-      // Cache the URL
-      _audioUrls[assetPath] = url;
-      return url;
-    } catch (e) {
-      // If Flutter asset loading fails, try direct path (fallback)
-      return 'assets/$assetPath';
-    }
-  }
   
   /// Play slash sound effect when a block is hit
   static Future<void> playSlashSound() async {
@@ -183,21 +130,15 @@ class SoundManager {
       // Get music path using AssetManager
       String selectedPath;
       if (tier.toLowerCase() == 'campfire') {
+        // Campfire is not a tier, handle separately
         selectedPath = AssetManager.getCampfireBgmPath();
       } else {
-        // Convert string to Tier enum
-        late Tier tierEnum;
-        switch (tier.toLowerCase()) {
-          case 'study': tierEnum = Tier.study; break;
-          case 'bronze': tierEnum = Tier.bronze; break;
-          case 'silver': tierEnum = Tier.silver; break;
-          case 'gold': tierEnum = Tier.gold; break;
-          default: tierEnum = Tier.study;
-        }
+        // Convert string to Tier enum using tier logic
+        final tierEnum = Tier.fromString(tier);
         selectedPath = AssetManager.getRandomBgmPath(tierEnum);
       }
       
-      final audioUrl = await _getAssetUrl(selectedPath);
+      final audioUrl = await AssetManager.getAssetUrl(selectedPath);
       if (audioUrl != null) {
         _currentBgm = html.AudioElement(audioUrl);
         _currentBgm!.volume = _bgmVolume;

@@ -11,4 +11,15 @@ enum Tier {
 
   final String name;
   final String emoji;
+  
+  /// Convert string to Tier enum
+  static Tier fromString(String tierString) {
+    switch (tierString.toLowerCase()) {
+      case 'study': return Tier.study;
+      case 'bronze': return Tier.bronze;
+      case 'silver': return Tier.silver;
+      case 'gold': return Tier.gold;
+      default: return Tier.study; // Default fallback
+    }
+  }
 }

@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'widgets/homepage.dart';
-import 'widgets/loading_screen.dart';
 import 'utils/sound_manager.dart';
+import 'utils/asset_manager.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  var binding = WidgetsFlutterBinding.ensureInitialized();
+  
+  // Preserve native splash until assets are loaded
+  FlutterNativeSplash.preserve(widgetsBinding: binding);
+  
   runApp(const MyApp());
 }
 
@@ -27,10 +31,17 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> _initializeApp() async {
     try {
+      // Preload images and sound effects first
+      await AssetManager.preloadImages();
+      await AssetManager.preloadSoundEffects();
+      AssetManager.preloadSoundMusics();
+      
+      // Initialize sound manager
       await SoundManager.initialize();
-    } catch (e) {
-      // Handle initialization error gracefully
+      
     } finally {
+      // Remove native splash now that critical assets are loaded
+      FlutterNativeSplash.remove();
       if (mounted) {
         setState(() {
           _isLoading = false;
@@ -38,17 +49,14 @@ class _MyAppState extends State<MyApp> {
       }
     }
   }
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Divisibility Samurai',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        textTheme: GoogleFonts.robotoTextTheme(),
-        fontFamily: GoogleFonts.roboto().fontFamily,
       ),
-      home: _isLoading ? const LoadingScreen() : const Homepage(),
+      home: _isLoading ? const Scaffold(body: Center(child: CircularProgressIndicator())) : const Homepage(),
     );
   }
 }
