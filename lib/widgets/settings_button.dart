@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
 import 'settings_dialog/settings_dialog.dart';
+import '../view_models/game_view_model.dart';
 
 class SettingsButton extends StatelessWidget {
-  const SettingsButton({super.key});
+  final GameViewModel gameViewModel;
+  
+  const SettingsButton({
+    super.key,
+    required this.gameViewModel,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -12,7 +18,7 @@ class SettingsButton extends StatelessWidget {
       onPressed: () {
         showDialog(
           context: context,
-          builder: (context) => const SettingsGameDialog(),
+          builder: (context) => SettingsGameDialog(gameViewModel: gameViewModel),
         );
       },
     );

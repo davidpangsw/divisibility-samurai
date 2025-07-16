@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
-import '../../utils/sound_manager.dart';
+import '../../view_models/game_view_model.dart';
 
 class SettingsGameDialog extends StatefulWidget {
-  const SettingsGameDialog({super.key});
+  final GameViewModel gameViewModel;
+  
+  const SettingsGameDialog({
+    super.key,
+    required this.gameViewModel,
+  });
 
   @override
   State<SettingsGameDialog> createState() => _SettingsGameDialogState();
@@ -15,9 +20,9 @@ class _SettingsGameDialogState extends State<SettingsGameDialog> {
   @override
   void initState() {
     super.initState();
-    // Get current volumes from SoundManager
-    _bgmVolume = SoundManager.bgmVolume;
-    _sfxVolume = SoundManager.sfxVolume;
+    // Get current volumes from GameViewModel
+    _bgmVolume = widget.gameViewModel.bgmVolume;
+    _sfxVolume = widget.gameViewModel.sfxVolume;
   }
 
   @override
@@ -39,7 +44,7 @@ class _SettingsGameDialogState extends State<SettingsGameDialog> {
                     setState(() {
                       _bgmVolume = value;
                     });
-                    SoundManager.setBgmVolume(value);
+                    widget.gameViewModel.setBgmVolume(value);
                   },
                   min: 0.0,
                   max: 1.0,
@@ -61,7 +66,7 @@ class _SettingsGameDialogState extends State<SettingsGameDialog> {
                     setState(() {
                       _sfxVolume = value;
                     });
-                    SoundManager.setSfxVolume(value);
+                    widget.gameViewModel.setSfxVolume(value);
                   },
                   min: 0.0,
                   max: 1.0,

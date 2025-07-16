@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import '../number_blocks/basic_number_block.dart';
+import '../game_widget/block_area.dart';
+import '../../utils/rectangle.dart';
+import '../../configs/config.dart';
+import '../number_blocks/animated_number_block_model.dart';
 
 class DivisorHintCard extends StatelessWidget {
   final String divisor;
@@ -60,35 +65,9 @@ class DivisorHintCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 8),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        '$positiveExample ✓',
-                        style: TextStyle(
-                          color: Colors.green[700],
-                          fontSize: 13,
-                          fontFamily: 'monospace',
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                _buildExampleRow(positiveExample, true),
                 const SizedBox(height: 4),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        '$negativeExample ✗',
-                        style: TextStyle(
-                          color: Colors.red[700],
-                          fontSize: 13,
-                          fontFamily: 'monospace',
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                _buildExampleRow(negativeExample, false),
                 const SizedBox(height: 8),
                 Container(
                   padding: const EdgeInsets.all(8),
@@ -111,5 +90,81 @@ class DivisorHintCard extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Widget _buildExampleRow(String exampleText, bool isPositive) {
+    // Extract the dividend number from examples like "123: 1+2+3=6 and 3|6 ⇒ 3|123"
+    int? dividendNumber = _extractDividendNumber(exampleText);
+    
+    if (dividendNumber != null) {
+      return Row(
+        children: [
+          SizedBox(
+            width: Config.numberBlockWidth,
+            height: Config.numberBlockHeight,
+            child: BlockArea(
+              areaRectangle: Rectangle(Config.numberBlockWidth, Config.numberBlockHeight),
+              blockRectangle: const Rectangle(Config.numberBlockWidth, Config.numberBlockHeight),
+              blocks: [
+                AnimatedNumberBlock(
+                  number: dividendNumber,
+                  isCorrect: isPositive,
+                  x: 0,
+                  y: 0,
+                  velocityX: 0,
+                  velocityY: 0,
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          Text(
+            isPositive ? '✓' : '✗',
+            style: TextStyle(
+              color: isPositive ? Colors.green[700] : Colors.red[700],
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              exampleText,
+              style: TextStyle(
+                color: isPositive ? Colors.green[700] : Colors.red[700],
+                fontSize: 13,
+                fontFamily: 'monospace',
+              ),
+            ),
+          ),
+        ],
+      );
+    } else {
+      // Fallback to original text display if number extraction fails
+      return Row(
+        children: [
+          Expanded(
+            child: Text(
+              '$exampleText ${isPositive ? '✓' : '✗'}',
+              style: TextStyle(
+                color: isPositive ? Colors.green[700] : Colors.red[700],
+                fontSize: 13,
+                fontFamily: 'monospace',
+              ),
+            ),
+          ),
+        ],
+      );
+    }
+  }
+
+  int? _extractDividendNumber(String text) {
+    // Extract the first number from examples like "123: 1+2+3=6 and 3|6 ⇒ 3|123"
+    final RegExp numberRegex = RegExp(r'^\d+');
+    final match = numberRegex.firstMatch(text);
+    if (match != null) {
+      return int.tryParse(match.group(0)!);
+    }
+    return null;
   }
 }

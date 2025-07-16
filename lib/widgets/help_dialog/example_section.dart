@@ -47,24 +47,24 @@ class _ExampleSectionState extends State<ExampleSection> {
       AnimatedNumberBlock(
         number: 21, 
         isCorrect: true, 
-        x: 90, 
-        y: 10, 
+        x: 10, 
+        y: 50, 
         velocityX: 0, 
         velocityY: 0
       ),
       AnimatedNumberBlock(
         number: 13, 
         isCorrect: false, 
-        x: 170, 
-        y: 10, 
+        x: 10, 
+        y: 90, 
         velocityX: 0, 
         velocityY: 0
       ),
       AnimatedNumberBlock(
         number: 25, 
         isCorrect: false, 
-        x: 250, 
-        y: 10, 
+        x: 10, 
+        y: 130, 
         velocityX: 0, 
         velocityY: 0
       ),
@@ -73,9 +73,9 @@ class _ExampleSectionState extends State<ExampleSection> {
     return Column(
       children: [
         SizedBox(
-          height: 80,
+          height: 180,
           child: BlockArea(
-            areaRectangle: const Rectangle(320, 60),
+            areaRectangle: const Rectangle(80, 160),
             blockRectangle: const Rectangle(Config.numberBlockWidth, Config.numberBlockHeight),
             blocks: exampleBlocks,
           ),

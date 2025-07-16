@@ -6,10 +6,16 @@
 ## Animation / Picture
 - Cat samurai anime after each tier done. (Use AI to generate)
     - Anime cutscene
-- 7, 11, 13, 15?
+- Block collision?
+
+- Save image cannot save the whole widget
+- Sword as divisor?
+- Consecutive combo reward? (Effects, score)
+- No missing block reward?
+
+## Difficulties
+- Other modes?
+    - 7, 11, 13, 15?
+    - Endless mode?
+- Missing block penalty not enough?
 - Formula as block?
-
-
-## Deployment
-1. Our game is done. Do not edit any classes. Teach me how to deploy it into firebase. Just generate your answers and commands involved into the chat.
-

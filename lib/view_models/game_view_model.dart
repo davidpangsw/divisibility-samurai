@@ -16,12 +16,12 @@ class GameViewModel extends ChangeNotifier {
 
   GameViewModel() {
     // Don't auto-start game, wait for user to click start button
-    _gameState.resetGame();
+    _gameState.resetGame(onResetSound: resetSound);
   }
 
   void _startGame() {
-    _gameState.resetGame();
-    _gameState.startGameAudio();
+    _gameState.resetGame(onResetSound: resetSound);
+    _gameState.startGameAudio(onPlayBgmForTier: playBgmForTier);
     _setStatus(GameStatus.firstLevelTransition);
   }
 
@@ -39,7 +39,7 @@ class GameViewModel extends ChangeNotifier {
     if (!isGameActive) return;
 
     if (isCorrect) {
-      _gameState.increaseScore(number);
+      _gameState.increaseScore(number, onPlaySlashSound: playSlashSound);
       _checkLevelCompletion();
     } else {
       _gameState.deductLife(number);
@@ -62,7 +62,7 @@ class GameViewModel extends ChangeNotifier {
       if (_gameState.isGameWon) {
         _setStatus(GameStatus.gameWon);
         // Stop BGM when game is won
-        SoundManager.stopBgm();
+        stopBgm();
       } else if (_gameState.isTierCompleted) {
         _setStatus(GameStatus.tierCompleted);
       } else {
@@ -75,20 +75,20 @@ class GameViewModel extends ChangeNotifier {
     if (_gameState.isGameLost) {
       _setStatus(GameStatus.gameLost);
       // Stop BGM when game is lost
-      SoundManager.stopBgm();
+      stopBgm();
     }
   }
 
   void proceedToNextLevel() {
     if (_status == GameStatus.levelCompleted) {
-      _gameState.nextLevel();
+      _gameState.nextLevel(onPlayBgmForTier: playBgmForTier);
       _setStatus(GameStatus.playing);
     }
   }
 
   void proceedToNextTier() {
     if (_status == GameStatus.tierCompleted) {
-      _gameState.nextLevel();
+      _gameState.nextLevel(onPlayBgmForTier: playBgmForTier);
       _setStatus(GameStatus.playing);
     }
   }
@@ -108,12 +108,42 @@ class GameViewModel extends ChangeNotifier {
   }
   
   void resetToStartScreen() {
-    _gameState.resetGame();
-    SoundManager.stopBgm();
+    _gameState.resetGame(onResetSound: resetSound);
+    stopBgm();
     _setStatus(GameStatus.notStarted);
   }
 
   void stopGame() {
     _setStatus(GameStatus.paused);
   }
+
+  // Sound management methods - centralized access to SoundManager
+  void playSlashSound() {
+    SoundManager.playSlashSound();
+  }
+
+  void playBgmForTier(String tier) {
+    SoundManager.playBgmForTier(tier);
+  }
+
+  void stopBgm() {
+    SoundManager.stopBgm();
+  }
+
+  void resetSound() {
+    SoundManager.reset();
+  }
+
+  void setBgmVolume(double volume) {
+    SoundManager.setBgmVolume(volume);
+    notifyListeners(); // Notify widgets that volume changed
+  }
+
+  void setSfxVolume(double volume) {
+    SoundManager.setSfxVolume(volume);
+    notifyListeners(); // Notify widgets that volume changed
+  }
+
+  double get bgmVolume => SoundManager.bgmVolume;
+  double get sfxVolume => SoundManager.sfxVolume;
 }

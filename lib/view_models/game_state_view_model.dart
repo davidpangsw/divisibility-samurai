@@ -1,6 +1,5 @@
 import '../configs/config.dart';
 import '../configs/game_level.dart';
-import '../utils/sound_manager.dart';
 
 class GameStateViewModel {
   int score = 0;
@@ -14,7 +13,7 @@ class GameStateViewModel {
   Map<String, List<int>> wrongAnswersByLevel = {}; // Track wrong answers by level
   int totalBlocksMissed = 0; // Track total blocks that fell off screen
 
-  void increaseScore(int number) {
+  void increaseScore(int number, {Function? onPlaySlashSound}) {
     score += Config.scorePerCorrectBlock;
     correctBlocksInCurrentLevel++;
     correctBlocksDisappearedInCurrentLevel++;
@@ -26,7 +25,7 @@ class GameStateViewModel {
     correctAnswersByLevel[levelKey]!.add(number);
     
     // Play sound only for correct answers
-    SoundManager.playSlashSound();
+    onPlaySlashSound?.call();
   }
 
   void deductLife(int number) {
@@ -67,7 +66,7 @@ class GameStateViewModel {
     return currentTier != nextTier;
   }
 
-  void nextLevel() {
+  void nextLevel({Function(String)? onPlayBgmForTier}) {
     if (level < GameLevel.totalLevels) {
       int previousLevel = level;
       level++;
@@ -81,12 +80,12 @@ class GameStateViewModel {
       if (previousTier != currentTier) {
         lives = Config.totalLives; // Refill lives when entering new tier
         // Change BGM for the new tier
-        SoundManager.playBgmForTier(currentTier);
+        onPlayBgmForTier?.call(currentTier);
       }
     }
   }
 
-  void resetGame() {
+  void resetGame({Function? onResetSound}) {
     score = 0;
     lives = Config.totalLives;
     level = 1;
@@ -98,12 +97,12 @@ class GameStateViewModel {
     wrongAnswersByLevel.clear();
     totalBlocksMissed = 0;
     // Reset sound manager but don't start BGM until game actually starts
-    SoundManager.reset();
+    onResetSound?.call();
   }
 
-  void startGameAudio() {
+  void startGameAudio({Function(String)? onPlayBgmForTier}) {
     // Start BGM when game actually begins
-    SoundManager.playBgmForTier('Study');
+    onPlayBgmForTier?.call('Study');
   }
   
   // Helper methods for level info

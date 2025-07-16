@@ -8,7 +8,7 @@ class HelpButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextButton.icon(
       icon: const Icon(Icons.help),
-      label: const Text('Help'),
+      label: const Text('How To Play'),
       onPressed: () {
         showDialog(
           context: context,

@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import '../../view_models/game_view_model.dart';
 import '../../configs/config.dart';
 import '../../configs/game_level.dart';
-import '../../utils/sound_manager.dart';
 import '../../utils/asset_manager.dart';
 import '../game_result_dialog.dart';
 import 'stats_bar.dart';
@@ -11,7 +10,12 @@ import 'play_area.dart';
 import 'game_overlays.dart';
 
 class GameWidget extends StatefulWidget {
-  const GameWidget({super.key});
+  final GameViewModel gameViewModel;
+  
+  const GameWidget({
+    super.key,
+    required this.gameViewModel,
+  });
 
   @override
   State<GameWidget> createState() => _GameWidgetState();
@@ -25,29 +29,27 @@ class _GameWidgetState extends State<GameWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => GameViewModel(),
-      child: Consumer<GameViewModel>(
-        builder: (context, gameViewModel, child) {
-          // Handle status changes
-          if (gameViewModel.hasStatusChanged) {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              _handleStatusChange(gameViewModel);
-            });
-          }
-          
-          return SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-              StatsBar(
-                score: gameViewModel.gameState.score,
-                level: gameViewModel.gameState.level,
-                lives: gameViewModel.gameState.lives,
-                divisor: gameViewModel.gameState.divisor,
-                remainingCorrectBlocksAllowed: gameViewModel.gameState.remainingCorrectBlocksAllowed,
-                remainingCorrectNeeded: gameViewModel.gameState.remainingCorrectNeeded,
+    return Consumer<GameViewModel>(
+      builder: (context, gameViewModel, child) {
+        // Handle status changes
+        if (gameViewModel.hasStatusChanged) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            _handleStatusChange(gameViewModel);
+          });
+        }
+        
+        return SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+            StatsBar(
+              score: gameViewModel.gameState.score,
+              level: gameViewModel.gameState.level,
+              lives: gameViewModel.gameState.lives,
+              divisor: gameViewModel.gameState.divisor,
+              remainingCorrectBlocksAllowed: gameViewModel.gameState.remainingCorrectBlocksAllowed,
+              remainingCorrectNeeded: gameViewModel.gameState.remainingCorrectNeeded,
               ),
               Stack(
                 children: [
@@ -109,10 +111,9 @@ class _GameWidgetState extends State<GameWidget> {
                 ],
               ),
             ],
-            ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 
@@ -191,7 +192,7 @@ class _GameWidgetState extends State<GameWidget> {
     }
     
     // Start campfire BGM for the rest period
-    SoundManager.playBgmForTier('campfire');
+    widget.gameViewModel.playBgmForTier('campfire');
     
     // Show tier transition overlay and wait for user action
     setState(() => _showingTierTransition = true);
