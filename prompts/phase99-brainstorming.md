@@ -1,11 +1,14 @@
 ## Phase 99: Brain storming
 - This file is just some brain storming. They are potential future features. Read it for reference only.
 
-
-- Use click to generate block?
+- Collision between blocks?
 
 ## Animation / Picture
 - Cat samurai anime after each tier done. (Use AI to generate)
+- Anime cutscene
+- add a counter that, for current divider, how many to click to go to the next round
+- 7, 11, 13, 15?
+- Formula as block?
 
 
 ## Deployment

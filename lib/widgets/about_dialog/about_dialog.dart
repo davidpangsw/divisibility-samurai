@@ -27,7 +27,60 @@ class AboutGameDialog extends StatelessWidget {
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
+            
+            // Author section
+            _buildAttribution(
+              'Created by ',
+              'David Pang',
+              'https://linktr.ee/davidpangsw',
+              '',
+              '',
+              '',
+            ),
+            const SizedBox(height: 16),
+            
             const Text('Credits & Attributions:'),
+            const SizedBox(height: 8),
+            
+            // Image attributions
+            _buildAttribution(
+              'Image by ',
+              'Sofielafee',
+              'https://pixabay.com/users/sofielafee-10521331/?utm_source=link-attribution&utm_medium=referral&utm_campaign=image&utm_content=4313104',
+              ' from ',
+              'Pixabay',
+              'https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=image&utm_content=4313104',
+            ),
+            const SizedBox(height: 4),
+            
+            _buildAttribution(
+              'Image by ',
+              '🌼Christel🌼',
+              'https://pixabay.com/users/chiemseherin-1425977/?utm_source=link-attribution&utm_medium=referral&utm_campaign=image&utm_content=8892397',
+              ' from ',
+              'Pixabay',
+              'https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=image&utm_content=8892397',
+            ),
+            const SizedBox(height: 4),
+            
+            _buildAttribution(
+              'Image by ',
+              'Zhang Guochun',
+              'https://pixabay.com/users/张国纯-20854249/?utm_source=link-attribution&utm_medium=referral&utm_campaign=image&utm_content=6122667',
+              ' from ',
+              'Pixabay',
+              'https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=image&utm_content=6122667',
+            ),
+            const SizedBox(height: 4),
+            
+            _buildAttribution(
+              'Image by ',
+              'Dorothe',
+              'https://pixabay.com/users/darkmoon_art-1664300/?utm_source=link-attribution&utm_medium=referral&utm_campaign=image&utm_content=5077455',
+              ' from ',
+              'Pixabay',
+              'https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=image&utm_content=5077455',
+            ),
             const SizedBox(height: 8),
             
             // Sound attributions
@@ -92,12 +145,32 @@ class AboutGameDialog extends StatelessWidget {
             const SizedBox(height: 4),
             
             _buildAttribution(
-              'Samurai image from ',
+              'Music by ',
+              'Mikhail Smusev',
+              'https://pixabay.com/users/sigmamusicart-36860929/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=368633',
+              ' from ',
+              'Pixabay',
+              'https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=368633',
+            ),
+            const SizedBox(height: 4),
+            
+            _buildAttribution(
+              'Music by ',
+              'Mykola Odnoroh',
+              'https://pixabay.com/users/lkoliks-48415707/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=332339',
+              ' from ',
+              'Pixabay',
+              'https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=332339',
+            ),
+            const SizedBox(height: 4),
+            
+            _buildAttribution(
+              'Samurai images from ',
               'OpenArt',
               'https://openart.ai/',
-              ' - AI generated artwork',
-              '',
-              '',
+              ' and ',
+              'KlingAI',
+              'https://klingai.com/',
             ),
           ],
         ),

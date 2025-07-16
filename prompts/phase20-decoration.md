@@ -30,5 +30,5 @@
 -  Can you read through the whole lib/ and see any things you can improve? Aim for refactoring and reducing code
 
 - Samurai picture
-    - I added several picture. Include them into assets.
+    - I added several picture. Include them into assets. (Also attributions, don't forget)
     - Also, make the samurai picture widget bigger (because I added some larger assets)

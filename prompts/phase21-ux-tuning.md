@@ -13,3 +13,8 @@
         - Make sure correct / wrong block look same before slash.
     - Do not start game immediately after user Exit the Game Result Disalogue
         - Show the StartGame as the same as the page starts.
+
+
+
+- Add my page (I am the author) into AboutDialog
+    - https://linktr.ee/davidpangsw

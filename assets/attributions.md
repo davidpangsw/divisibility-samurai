@@ -12,6 +12,9 @@
 - Gold Background
     - Image by <a href="https://pixabay.com/users/darkmoon_art-1664300/?utm_source=link-attribution&utm_medium=referral&utm_campaign=image&utm_content=5077455">Dorothe</a> from <a href="https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=image&utm_content=5077455">Pixabay</a>
 
+- Samurai
+    - First one from OpenArt
+    - More from KlingAI
 
 
 # sounds
