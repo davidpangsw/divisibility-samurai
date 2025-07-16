@@ -34,11 +34,18 @@ class _WrongNumberBlockAnimationState extends NumberBlockAnimationState<WrongNum
 
   @override
   Widget buildAnimatedChild() {
-    return Container(
-      decoration: BoxDecoration(
-        color: _colorAnimation.value ?? widget.startColor,
-      ),
-      child: widget.child,
+    return Stack(
+      children: [
+        widget.child, // Wood texture at bottom
+        Positioned.fill(
+          child: Container(
+            decoration: BoxDecoration(
+              color: _colorAnimation.value ?? Colors.transparent,
+              borderRadius: BorderRadius.circular(4),
+            ),
+          ),
+        ), // Color overlay on top, filling entire space
+      ],
     );
   }
 }

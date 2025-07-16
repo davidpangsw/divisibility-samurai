@@ -37,8 +37,8 @@ class NumberBlock extends StatelessWidget {
     } else {
       return WrongNumberBlockAnimation(
         key: key,
-        startColor: Colors.blue,
-        endColor: Colors.red,
+        startColor: Colors.transparent, // Start transparent to show wood
+        endColor: Colors.red,          // Change to red when slashed
         onAnimationTriggered: onSlashed,
         child: child,
       );

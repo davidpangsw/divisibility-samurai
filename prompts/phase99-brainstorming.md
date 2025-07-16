@@ -2,10 +2,7 @@
 - This file is just some brain storming. They are potential future features. Read it for reference only.
 
 
-- Change background in different tiers? Make the feeling different?
 - Use click to generate block?
-- UI/UX
-    - Tune the game to become additive
 
 ## Animation / Picture
 - Cat samurai anime after each tier done. (Use AI to generate)

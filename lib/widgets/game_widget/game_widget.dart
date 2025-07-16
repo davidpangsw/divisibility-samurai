@@ -222,11 +222,11 @@ class _GameWidgetState extends State<GameWidget> {
         totalBlocksMissed: gameViewModel.gameState.totalBlocksMissed,
         onRestart: () {
           Navigator.of(context).pop();
-          gameViewModel.restartGame();
-          // Resume the physics loop in PlayArea
+          gameViewModel.resetToStartScreen();
+          // Clear any blocks and stop physics
           final playAreaState = _playAreaKey.currentState;
           if (playAreaState != null) {
-            (playAreaState as dynamic).resumeGame();
+            (playAreaState as dynamic).stopAllAnimationsAndClearBlocks();
           }
         },
       ),

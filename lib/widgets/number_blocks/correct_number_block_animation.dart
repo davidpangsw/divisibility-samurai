@@ -39,12 +39,7 @@ class _CorrectNumberBlockAnimationState extends NumberBlockAnimationState<Correc
   Widget buildAnimatedChild() {
     return CustomPaint(
       foregroundPainter: _SlashPainter(_slashLine, _lineAnimation.value),
-      child: Container(
-        decoration: const BoxDecoration(
-          color: Colors.blue,
-        ),
-        child: widget.child,
-      ),
+      child: widget.child, // No color overlay - let wood show through
     );
   }
 }

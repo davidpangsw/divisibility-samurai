@@ -106,6 +106,12 @@ class GameViewModel extends ChangeNotifier {
   void restartGame() {
     _startGame();
   }
+  
+  void resetToStartScreen() {
+    _gameState.resetGame();
+    SoundManager.stopBgm();
+    _setStatus(GameStatus.notStarted);
+  }
 
   void stopGame() {
     _setStatus(GameStatus.paused);
