@@ -163,6 +163,41 @@ assets/
 - **Asset Organization**: Follow tier-based structure for audio/visual assets
 - **Performance**: Maintain 60 FPS with efficient physics calculations
 - **Asset Management**: NEVER bypass AssetManager - always use its methods for asset paths
+- **BasicNumberBlock**: NEVER modify BasicNumberBlock class - use it exactly as-is
+
+## Sound Management Architecture (CRITICAL)
+
+**⚠️ IMPORTANT**: This project follows a strict sound management hierarchy that must be maintained:
+
+```
+Widget Layer → GameViewModel → GameStateViewModel (with callbacks) → SoundManager
+```
+
+### Rules:
+1. **Only GameViewModel** should directly call SoundManager methods
+2. **Widgets** should call GameViewModel sound methods (setBgmVolume, setSfxVolume, etc.)
+3. **GameStateViewModel** accepts sound functions as parameters (onPlaySlashSound, onPlayBgmForTier, etc.)
+4. **Never** call SoundManager directly from widgets or other ViewModels
+
+### Implementation Pattern:
+```dart
+// In GameViewModel
+void playSlashSound() => SoundManager.playSlashSound();
+
+// In GameStateViewModel  
+void increaseScore(int number, {Function? onPlaySlashSound}) {
+  // game logic
+  onPlaySlashSound?.call();
+}
+
+// In Widget
+gameViewModel.setBgmVolume(0.5); // ✅ Correct
+SoundManager.setBgmVolume(0.5);  // ❌ Wrong
+```
+
+## Project Status: MAINTENANCE MODE
+
+This project is in excellent condition with clean architecture, proper separation of concerns, and optimized performance. All major technical debt has been resolved.
 
 ## Deployment
 

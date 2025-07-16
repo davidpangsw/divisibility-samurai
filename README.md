@@ -1,16 +1,8 @@
-# math_game
+# divisibility samurai
 
 A new Flutter project.
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## What to tell claude next time
+```
+This is the Divisibility Samurai Flutter web game project. Read the CLAUDE.md file for complete project context, then read the  PROJECT_SUMMARY.md file to understand what was accomplished and the current architecture. The project is in maintenance mode with clean, well-organized code.
+```
